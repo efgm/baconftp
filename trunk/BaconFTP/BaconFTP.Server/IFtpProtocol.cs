@@ -5,11 +5,8 @@ using System.Text;
 
 namespace BaconFTP.Server
 {
-    class Constants
+    internal interface IFtpProtocol
     {
-        public static int DefaultFtpPort
-        {
-            get { return 21; }
-        }
+        
     }
 }
