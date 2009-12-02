@@ -21,7 +21,7 @@ namespace BaconFTP.Server
         #region Constructor(s)
 
         public FtpServer()
-            : this(Constants.DefaultPort)
+            : this(Constants.DefaultFtpPort)
         { }
 
         public FtpServer(int port)
@@ -57,8 +57,7 @@ namespace BaconFTP.Server
 
                 _connectedClients.Add(ftpClient);
 
-                new Thread(new ParameterizedThreadStart(this.HandleClientConnection)).Start(ftpClient);
-                
+                new Thread(new ParameterizedThreadStart(this.HandleClientConnection)).Start(ftpClient);                
             }
         }
 
