@@ -7,6 +7,6 @@ namespace BaconFTP.Server
 {
     internal interface IFtpProtocol
     {
-        
+        void SendWelcomeMessageToClient();
     }
 }
