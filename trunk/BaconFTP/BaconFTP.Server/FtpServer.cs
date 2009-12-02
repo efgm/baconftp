@@ -66,9 +66,15 @@ namespace BaconFTP.Server
             //por ahora nama pa proba, aqui iria instanciar el protocolo y k el resuelva
             FtpClient ftpClient = (FtpClient)client;
 
-            ftpClient.Stream.Write(Encoding.ASCII.GetBytes("Alla klk...\n"), 0, 11);
+            FtpProtocol protocol = new FtpProtocol(ftpClient);
 
-            ftpClient.TcpClientObject.Close();
+            protocol.SendWelcomeMessageToClient();
+
+            byte[] buffer = new byte[1024];
+                        
+            ftpClient.Stream.Read(buffer, 0, 1024);            
+
+            Console.WriteLine("Read: {0}\n", Encoding.ASCII.GetString(buffer));
         }
 
         #endregion //implementation

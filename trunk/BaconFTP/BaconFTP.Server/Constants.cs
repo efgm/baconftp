@@ -5,11 +5,21 @@ using System.Text;
 
 namespace BaconFTP.Server
 {
-    class Constants
+    internal enum Codes
     {
-        public static int DefaultFtpPort
+        Okay = 200
+    }
+
+    internal class Constants
+    {
+        internal static int DefaultFtpPort
         {
             get { return 21; }
+        }
+
+        internal static string WelcomeMessage
+        {
+            get { return ((int)Codes.Okay) + " Welcome.\n"; }
         }
     }
 }
