@@ -68,7 +68,7 @@ namespace BaconFTP.Server
 
             FtpProtocol protocol = new FtpProtocol(ftpClient);
 
-            protocol.SendWelcomeMessageToClient();
+            protocol.PerformHandShake();
 
             byte[] buffer = new byte[1024];
                         
