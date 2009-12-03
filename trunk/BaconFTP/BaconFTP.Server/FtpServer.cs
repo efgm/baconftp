@@ -21,7 +21,7 @@ namespace BaconFTP.Server
         #region Constructor(s)
 
         public FtpServer()
-            : this(Constants.DefaultFtpPort)
+            : this(Const.DefaultFtpPort)
         { }
 
         public FtpServer(int port)
