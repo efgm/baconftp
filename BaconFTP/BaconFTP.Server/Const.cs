@@ -19,6 +19,8 @@ namespace BaconFTP.Server
 
     internal class Const
     {
+        #region Constants
+        
         internal static int DefaultFtpPort 
         {
             get { return 21; }
@@ -28,6 +30,8 @@ namespace BaconFTP.Server
         {
             get { return "anonymous"; }
         }
+
+        #endregion //Constants
 
         #region Messages
 
@@ -46,7 +50,7 @@ namespace BaconFTP.Server
             get { return ((int)Codes.UserLoggedIn) + " Logged in.\n"; }
         }
 
-        #endregion
+        #endregion //Messages
 
         #region Commands
 
@@ -60,6 +64,21 @@ namespace BaconFTP.Server
             get { return "PASS"; }
         }
 
-        #endregion
+        internal static string PwdCommand
+        {
+            get { return "PWD"; }
+        }
+
+        internal static string CwdCommand
+        {
+            get { return "CWD"; }
+        }
+
+        internal static string QuitCommand
+        {
+            get { return "QUIT"; }
+        }
+
+        #endregion //Commands
     }
 }

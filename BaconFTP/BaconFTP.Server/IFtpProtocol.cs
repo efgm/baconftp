@@ -8,5 +8,6 @@ namespace BaconFTP.Server
     internal interface IFtpProtocol
     {
         void PerformHandShake();
+        void ListenForCommands();
     }
 }

@@ -22,6 +22,12 @@ namespace BaconFTP.Server
             SendWelcomeMessageToClient();
 
             string username = GetClientUsername();
+            
+            //!!!!!!!
+
+            // TODO: falta validar los usuarios que estan registrados en el sistema
+
+            //!!!!!!!
 
             if (!String.IsNullOrEmpty(username))
             {
@@ -33,17 +39,29 @@ namespace BaconFTP.Server
             }
         }
 
+        //escuchar infinitamente los comandos del cliente conectado.
+        public void ListenForCommands()
+        {
+            while (true)
+            {
+                ClientCommand cmd = GetCommandFromClient();
+
+                switch (cmd.Command)
+                {
+                    case Const.PWD:
+                }
+            }
+        }
+
         #endregion
 
         #region Implementation
 
-        //le manda el mensaje de bienvenida del servidor al cliente
         private void SendWelcomeMessageToClient()
         {
             _client.Stream.Write(Encode(Const.WelcomeMessage), 0, Const.WelcomeMessage.Length);
         }
 
-        //envia el msj de que el usuario anonymous esta habilitado y se puede logear con el
         private void SendAnonymousUserOkToClient()
         {
             _client.Stream.Write(Encode(Const.AnonymousUserAllowedMessage), 0, Const.AnonymousUserAllowedMessage.Length);
@@ -66,6 +84,7 @@ namespace BaconFTP.Server
             return (cmd.Command == Const.UserCommand) ? cmd.Arguments.First() : null;
         }
         
+        //devuelve el comando que se recibio del cliente
         private ClientCommand GetCommandFromClient()
         {
             byte[] buffer = new byte[1024];
