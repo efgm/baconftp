@@ -12,6 +12,7 @@ namespace BaconFTP.Server
         FileOkay = 202,
         DirectoryStatus = 212,
         FileStatus = 213,
+        UserLoggedIn = 230,
         
         UserOkay = 331,
     }
@@ -38,6 +39,11 @@ namespace BaconFTP.Server
         internal static string WelcomeMessage
         {
             get { return ((int)Codes.Okay) + " Welcome to BaconFTP Server.\n"; }
+        }
+
+        internal static string UserLoggedInMessage
+        {
+            get { return ((int)Codes.UserLoggedIn) + " Logged in."; }
         }
 
         #endregion
