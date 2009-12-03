@@ -8,8 +8,8 @@ namespace BaconFTP.Server
 {
     internal class FtpClient
     {
-        public NetworkStream Stream { get; set; }
-        public TcpClient TcpClientObject { get; set; }
+        public NetworkStream Stream { get; private set; }
+        public TcpClient TcpClientObject { get; private set; }
 
         internal FtpClient(TcpClient clientObject)
         {

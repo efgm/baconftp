@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Constants.cs" />
+    <Compile Include="Const.cs" />
     <Compile Include="FtpClient.cs" />
     <Compile Include="FtpProtocol.cs" />
     <Compile Include="IFtpProtocol.cs" />
