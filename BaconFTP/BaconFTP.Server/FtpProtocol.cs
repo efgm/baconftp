@@ -18,7 +18,21 @@ namespace BaconFTP.Server
 
         public void SendWelcomeMessageToClient()
         {
-            _client.Stream.Write(Encoding.ASCII.GetBytes(Constants.WelcomeMessage), 0, Constants.WelcomeMessage.Length);
+            _client.Stream.Write(Encode(Constants.WelcomeMessage), 0, Constants.WelcomeMessage.Length);
+        }
+
+        #endregion
+
+        #region Implementation
+
+        private byte[] Encode(string str)
+        {
+            return Encoding.ASCII.GetBytes(str);
+        }
+
+        private string Decode(byte[] bytes)
+        {
+            return Encoding.ASCII.GetString(bytes);
         }
 
         #endregion
