@@ -6,8 +6,12 @@ using System.Text;
 namespace BaconFTP.Server
 {
     internal enum Codes
-    {
-        Okay = 200
+    {   
+        CommandNotImplemented = 120,
+        Okay = 200,
+        FileOkay = 202,
+        DirectoryStatus = 212,
+        FileStatus = 213
     }
 
     internal class Constants
@@ -19,7 +23,7 @@ namespace BaconFTP.Server
 
         internal static string WelcomeMessage
         {
-            get { return ((int)Codes.Okay) + " Welcome.\n"; }
+            get { return ((int)Codes.Okay) + " Welcome to BaconFTP Server.\n"; }
         }
     }
 }
