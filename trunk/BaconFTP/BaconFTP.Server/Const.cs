@@ -49,7 +49,7 @@ namespace BaconFTP.Server
             get { return "USER"; }
         }
 
-        internal static string Passcommand
+        internal static string PassCommand
         {
             get { return "PASS"; }
         }

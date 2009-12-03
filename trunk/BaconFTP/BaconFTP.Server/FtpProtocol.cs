@@ -16,16 +16,20 @@ namespace BaconFTP.Server
 
         #region IFtpProtocol Members
 
+        //valida el usuario y da acceso
         public void PerformHandShake()
         {
             SendWelcomeMessageToClient();
 
             string username = GetClientUsername();
 
-            if (username == Const.AnonymousUser)
+            if (!String.IsNullOrEmpty(username))
             {
-                SendAnonymousUserOkToClient();
-                GetAnonymousPasswordAndValidate();
+                if (username == Const.AnonymousUser)
+                {
+                    SendAnonymousUserOkToClient();
+                    GetAnonymousPasswordAndValidate();
+                }
             }
         }
 
@@ -50,36 +54,39 @@ namespace BaconFTP.Server
         {
             ClientCommand cmd = GetCommandFromClient();
 
+            if (cmd.Command == Const.UserCommand)
+            {
+                _client.Username = cmd.Arguments.First();
+            }
             return (cmd.Command == Const.UserCommand) ? cmd.Arguments.First() : null;
         }
         
         private ClientCommand GetCommandFromClient()
         {
             byte[] buffer = new byte[1024];
-            StringBuilder recievedData = new StringBuilder();
-
             int bytesRead = _client.Stream.Read(buffer, 0, buffer.Length);
 
             if (bytesRead > 0)
             {
-                string cmdString = recievedData.Append(Decode(buffer), 0, bytesRead).ToString().Replace(Environment.NewLine, String.Empty);
+                string cmdString = Decode(buffer).Substring(0, bytesRead).Replace(Environment.NewLine, String.Empty);
 
-                List<string> argList = new List<string>();
+                var argList = new List<string>();
 
-                foreach (string arg in cmdString.Substring(1, cmdString.Length).Split(' '))
+                foreach (string arg in cmdString.Split(' ').Skip(1))
                     argList.Add(arg);
 
                 return new ClientCommand(cmdString.Split(' ').First(), argList);
             }
-
-            else
-                return null;
+            else return null;
             
         }
 
         private void GetAnonymousPasswordAndValidate()
         {
-            string command = GetClientUsername();
+            ClientCommand cmd = GetCommandFromClient();
+
+            if (cmd.Command == Const.PassCommand)
+                _client.User
         }
 
         private byte[] Encode(string str)
