@@ -94,6 +94,7 @@ namespace BaconFTP.Server
             {
                 _client.Password = cmd.Arguments.First();
 
+                SendUserLoggedInMessage();
             }
         }
 
