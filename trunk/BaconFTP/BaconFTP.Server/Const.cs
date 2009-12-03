@@ -43,7 +43,7 @@ namespace BaconFTP.Server
 
         internal static string UserLoggedInMessage
         {
-            get { return ((int)Codes.UserLoggedIn) + " Logged in."; }
+            get { return ((int)Codes.UserLoggedIn) + " Logged in.\n"; }
         }
 
         #endregion
