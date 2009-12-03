@@ -49,6 +49,11 @@ namespace BaconFTP.Server
             _client.Stream.Write(Encode(Const.AnonymousUserAllowedMessage), 0, Const.AnonymousUserAllowedMessage.Length);
         }
 
+        private void SendUserLoggedInMessage()
+        {
+            _client.Stream.Write(Encode(Const.UserLoggedInMessage), 0, Const.UserLoggedInMessage.Length);
+        }
+
         //devuelve el nombre de usuario del cliente
         private string GetClientUsername()
         {
@@ -86,7 +91,10 @@ namespace BaconFTP.Server
             ClientCommand cmd = GetCommandFromClient();
 
             if (cmd.Command == Const.PassCommand)
-                _client.User
+            {
+                _client.Password = cmd.Arguments.First();
+
+            }
         }
 
         private byte[] Encode(string str)
