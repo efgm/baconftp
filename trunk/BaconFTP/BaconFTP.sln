@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaconFTP.Server", "BaconFTP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaconFTP.Main", "BaconFTP.Main\BaconFTP.Main.csproj", "{B4E1CE50-190C-4229-B2C6-C5550E4E5210}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaconFTP.Data", "BaconFTP.Data\BaconFTP.Data.csproj", "{FAAA89E6-7861-4F3E-9B16-485EF7583A31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{B4E1CE50-190C-4229-B2C6-C5550E4E5210}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4E1CE50-190C-4229-B2C6-C5550E4E5210}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4E1CE50-190C-4229-B2C6-C5550E4E5210}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAAA89E6-7861-4F3E-9B16-485EF7583A31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAAA89E6-7861-4F3E-9B16-485EF7583A31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAAA89E6-7861-4F3E-9B16-485EF7583A31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAAA89E6-7861-4F3E-9B16-485EF7583A31}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -53,6 +53,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FtpServer.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BaconFTP.Data\BaconFTP.Data.csproj">
+      <Project>{FAAA89E6-7861-4F3E-9B16-485EF7583A31}</Project>
+      <Name>BaconFTP.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

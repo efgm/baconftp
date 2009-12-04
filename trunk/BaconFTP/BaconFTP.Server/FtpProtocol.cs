@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using BaconFTP.Data;
+using BaconFTP.Data.Repositories;
 
 namespace BaconFTP.Server
 {
     internal class FtpProtocol : IFtpProtocol
     {
         private readonly FtpClient _client;
+        private const IAccountRepository _accountRepository = new AccountRepository();
 
         public FtpProtocol(FtpClient client)
         {
@@ -22,21 +25,15 @@ namespace BaconFTP.Server
         {
             SendMessageToClient(Const.WelcomeMessage);
 
-            string username = GetClientUsername();
-            
-            //!!!!!!!
+            GetClientUsername();
 
-            // TODO: falta validar los usuarios que estan registrados en el sistema
-
-            //!!!!!!!
-
-            if (!String.IsNullOrEmpty(username))
+            if (!String.IsNullOrEmpty(_client.Username))
             {
-                if (username == Const.AnonymousUser)
-                {
-                    SendMessageToClient(Const.AnonymousUserAllowedMessage);
-                    GetAnonymousPasswordAndValidate();
-                }
+                if (_client.Username == Const.AnonymousUser)
+                    AuthenticateAnonymousUser();
+
+                else
+                    AuthenticateUser();
             }
         }
 
@@ -68,7 +65,7 @@ namespace BaconFTP.Server
         }
 
         //devuelve el nombre de usuario del cliente
-        private string GetClientUsername()
+        private void GetClientUsername()
         {
             ClientCommand cmd = GetCommandFromClient();
 
@@ -112,6 +109,14 @@ namespace BaconFTP.Server
             }
         }
 
+        private void GetPasswordFromUser()
+        {
+            ClientCommand cmd = GetCommandFromClient();
+
+            if (cmd.Command == Const.PassCommand)            
+                _client.Password = cmd.Arguments.First();
+        }
+
         private byte[] Encode(string str)
         {
             return Encoding.ASCII.GetBytes(str);
@@ -131,7 +136,30 @@ namespace BaconFTP.Server
             _client.CloseConnection();
         }
 
+
         #endregion //CommandHandling
+
+        #region Authentication
+
+        private void AuthenticateAnonymousUser()
+        {
+            SendMessageToClient(Const.AnonymousUserAllowedMessage);
+            GetAnonymousPasswordAndValidate();
+        }
+
+        private bool AuthenticateUser()
+        {
+            try
+            {
+                if (_accountRepository.GetByUsername(_client.Username).Password == _client.Password)
+                    return true;
+            }
+            catch { return false; }
+
+            return false;
+        }
+
+        #endregion //Authentication
 
 
 
