@@ -19,5 +19,10 @@ namespace BaconFTP.Server
             TcpClientObject = clientObject;
             Stream = clientObject.GetStream();
         }
+
+        public void CloseConnection()
+        {
+            TcpClientObject.Close();
+        }
     }
 }
