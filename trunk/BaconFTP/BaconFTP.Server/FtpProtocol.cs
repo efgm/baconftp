@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace BaconFTP.Server
 {
@@ -19,7 +20,7 @@ namespace BaconFTP.Server
         //valida el usuario y da acceso
         public void PerformHandShake()
         {
-            SendWelcomeMessageToClient();
+            SendMessageToClient(Const.WelcomeMessage);
 
             string username = GetClientUsername();
             
@@ -33,7 +34,7 @@ namespace BaconFTP.Server
             {
                 if (username == Const.AnonymousUser)
                 {
-                    SendAnonymousUserOkToClient();
+                    SendMessageToClient(Const.AnonymousUserAllowedMessage);
                     GetAnonymousPasswordAndValidate();
                 }
             }
@@ -46,10 +47,14 @@ namespace BaconFTP.Server
             {
                 ClientCommand cmd = GetCommandFromClient();
 
-                switch (cmd.Command)
+                if (cmd.Command == Const.QuitCommand)
                 {
-                    case Const.PWD:
+                    HandleQuitCommand();
+                    break;
                 }
+
+                else
+                    SendMessageToClient(Const.UnknownCommandErrorMessage);
             }
         }
 
@@ -57,19 +62,9 @@ namespace BaconFTP.Server
 
         #region Implementation
 
-        private void SendWelcomeMessageToClient()
+        private void SendMessageToClient(string message)
         {
-            _client.Stream.Write(Encode(Const.WelcomeMessage), 0, Const.WelcomeMessage.Length);
-        }
-
-        private void SendAnonymousUserOkToClient()
-        {
-            _client.Stream.Write(Encode(Const.AnonymousUserAllowedMessage), 0, Const.AnonymousUserAllowedMessage.Length);
-        }
-
-        private void SendUserLoggedInMessage()
-        {
-            _client.Stream.Write(Encode(Const.UserLoggedInMessage), 0, Const.UserLoggedInMessage.Length);
+            _client.Stream.Write(Encode(message), 0, message.Length);
         }
 
         //devuelve el nombre de usuario del cliente
@@ -113,7 +108,7 @@ namespace BaconFTP.Server
             {
                 _client.Password = cmd.Arguments.First();
 
-                SendUserLoggedInMessage();
+                SendMessageToClient(Const.UserLoggedInMessage);
             }
         }
 
@@ -127,6 +122,19 @@ namespace BaconFTP.Server
             return Encoding.ASCII.GetString(bytes);
         }
 
-        #endregion
+        #region CommandHandling
+
+        private void HandleQuitCommand()
+        {
+            SendMessageToClient(Const.ServerClosingConnectionMessage);
+
+            _client.CloseConnection();
+        }
+
+        #endregion //CommandHandling
+
+
+
+        #endregion //Implementation
     }
 }

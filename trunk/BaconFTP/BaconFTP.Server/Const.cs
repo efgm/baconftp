@@ -12,9 +12,12 @@ namespace BaconFTP.Server
         FileOkay = 202,
         DirectoryStatus = 212,
         FileStatus = 213,
+        ServerClosingConnection = 221,
         UserLoggedIn = 230,
         
         UserOkay = 331,
+
+        Error = 500,
     }
 
     internal class Const
@@ -50,6 +53,16 @@ namespace BaconFTP.Server
             get { return ((int)Codes.UserLoggedIn) + " Logged in.\n"; }
         }
 
+        internal static string ServerClosingConnectionMessage
+        {
+            get { return ((int)Codes.ServerClosingConnection) + " Closing connection..\n"; }
+        }
+
+        internal static string UnknownCommandErrorMessage
+        {
+            get { return ((int)Codes.Error) + " Command not recognized.\n"; }
+        }
+
         #endregion //Messages
 
         #region Commands
@@ -78,7 +91,42 @@ namespace BaconFTP.Server
         {
             get { return "QUIT"; }
         }
+        
+        internal static string CdupCommand
+        {
+            get { return "CDUP"; }
+        }
 
+        internal static string StorCommand
+        {
+            get { return "STOR"; }
+        }
+
+        internal static string RetrCommand
+        {
+            get { return "RETR"; }
+        }
+
+        internal static string MkdCommand
+        {
+            get { return "MKD"; }
+        }
+
+        internal static string RmdCommand
+        {
+            get { return "RMD"; }
+        }
+
+        internal static string PasvCommand
+        {
+            get { return "PASV"; }
+        }
+
+        internal static string ListCommand
+        {
+            get { return "LIST"; }
+        }
+        
         #endregion //Commands
     }
 }
