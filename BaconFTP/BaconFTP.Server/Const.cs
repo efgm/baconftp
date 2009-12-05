@@ -18,6 +18,7 @@ namespace BaconFTP.Server
         UserOkay = 331,
 
         Error = 500,
+        NotLoggedIn = 530,
     }
 
     internal class Const
@@ -61,6 +62,16 @@ namespace BaconFTP.Server
         internal static string UnknownCommandErrorMessage
         {
             get { return ((int)Codes.Error) + " Command not recognized.\n"; }
+        }
+
+        internal static string UserOkNeedPasswordMessage
+        {
+            get { return ((int)Codes.UserOkay) + " User name okay, need password.\n"; }
+        }
+
+        internal static string LoginFailedMessage
+        {
+            get { return ((int)Codes.NotLoggedIn) + " Login authentication failed.\n"; }
         }
 
         #endregion //Messages

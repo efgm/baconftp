@@ -11,7 +11,7 @@ namespace BaconFTP.Server
     internal class FtpProtocol : IFtpProtocol
     {
         private readonly FtpClient _client;
-        private const IAccountRepository _accountRepository = new AccountRepository();
+        private readonly IAccountRepository _accRepo = new AccountRepository();
 
         public FtpProtocol(FtpClient client)
         {
@@ -42,16 +42,20 @@ namespace BaconFTP.Server
         {
             while (true)
             {
-                ClientCommand cmd = GetCommandFromClient();
-
-                if (cmd.Command == Const.QuitCommand)
+                try
                 {
-                    HandleQuitCommand();
-                    break;
-                }
+                    ClientCommand cmd = GetCommandFromClient();
 
-                else
-                    SendMessageToClient(Const.UnknownCommandErrorMessage);
+                    if (cmd.Command == Const.QuitCommand)
+                    {
+                        HandleQuitCommand();
+                        break;
+                    }
+
+                    else
+                        SendMessageToClient(Const.UnknownCommandErrorMessage);
+                }
+                catch { continue; }
             }
         }
 
@@ -70,10 +74,7 @@ namespace BaconFTP.Server
             ClientCommand cmd = GetCommandFromClient();
 
             if (cmd.Command == Const.UserCommand)
-            {
-                _client.Username = cmd.Arguments.First();
-            }
-            return (cmd.Command == Const.UserCommand) ? cmd.Arguments.First() : null;
+                _client.Username = cmd.Arguments.First();         
         }
         
         //devuelve el comando que se recibio del cliente
@@ -151,12 +152,22 @@ namespace BaconFTP.Server
         {
             try
             {
-                if (_accountRepository.GetByUsername(_client.Username).Password == _client.Password)
+                SendMessageToClient(Const.UserOkNeedPasswordMessage);
+                GetPasswordFromUser();
+
+                if (_accRepo.GetByUsername(_client.Username).Password == _client.Password)
+                {
+                    SendMessageToClient(Const.UserLoggedInMessage);
                     return true;
+                }
+                else
+                {
+                    SendMessageToClient(Const.LoginFailedMessage);
+                    return false;
+                }
+                
             }
             catch { return false; }
-
-            return false;
         }
 
         #endregion //Authentication

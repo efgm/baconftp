@@ -26,9 +26,10 @@ namespace BaconFTP.Data.Repositories
 
         public Account GetByUsername(string username)
         {
+            var test = _root.Elements();
             try
             {
-                return (from a in _root.Elements("accounts")
+                return (from a in _root.Descendants("accounts")
                         where a.Attribute("username").Value == username
                         select new Account
                         {
