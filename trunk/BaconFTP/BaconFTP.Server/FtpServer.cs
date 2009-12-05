@@ -67,8 +67,16 @@ namespace BaconFTP.Server
 
             FtpProtocol protocol = new FtpProtocol(ftpClient);
 
-            protocol.PerformHandShake();
-            protocol.ListenForCommands();            
+            if (protocol.PerformHandShake())
+                protocol.ListenForCommands();
+            else
+                CloseConnection(ftpClient);
+        }
+
+        private void CloseConnection(FtpClient client)
+        {
+            _connectedClients.Remove(client);
+            client.CloseConnection();
         }
 
         #endregion //implementation
