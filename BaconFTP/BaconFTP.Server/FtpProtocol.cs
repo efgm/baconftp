@@ -135,7 +135,7 @@ namespace BaconFTP.Server
         {
             SendMessageToClient(Const.ServerClosingConnectionMessage);
 
-            _client.CloseConnection();
+            FtpServer.CloseConnection(_client);
         }
 
 
@@ -148,6 +148,8 @@ namespace BaconFTP.Server
             SendMessageToClient(Const.AnonymousUserAllowedMessage);
             GetAnonymousPasswordAndValidate();
 
+            _logger.Write(String.Format("Logged in as \'{0}\' from {1}", 
+                                        _client.Username, _client.EndPoint));
             return true;
         }
 
@@ -161,14 +163,19 @@ namespace BaconFTP.Server
                 if (_accRepo.GetByUsername(_client.Username).Password == _client.Password)
                 {
                     SendMessageToClient(Const.UserLoggedInMessage);
+
+                    _logger.Write(String.Format("Logged in as \'{0}\' from {1}.", 
+                                                _client.Username, _client.EndPoint));
                     return true;
                 }
                 else
                 {
                     SendMessageToClient(Const.LoginFailedMessage);
+
+                    _logger.Write(String.Format("Login attempt from \'{0}\' as {1} failed.", 
+                                                _client.EndPoint, _client.Username));
                     return false;
-                }
-                
+                }                
             }
             catch { return false; }
         }

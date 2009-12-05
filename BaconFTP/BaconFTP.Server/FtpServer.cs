@@ -9,49 +9,50 @@ using BaconFTP.Data.Logger;
 
 namespace BaconFTP.Server
 {
-    public class FtpServer
+    public static class FtpServer
     {
         #region Fields
         
-        private readonly TcpListener _tcpListener;
-        private readonly Thread _listenerThread;
-        private readonly List<FtpClient> _connectedClients = new List<FtpClient>();
+        private static TcpListener _tcpListener;
+        private static List<FtpClient> _connectedClients = new List<FtpClient>();
         
         //por ahora, despues hay que implementar uno para hacerlo en un archivo.
-        private readonly ILogger _logger = new ConsoleLogger();
+        private static ILogger _logger = new ConsoleLogger();
         
         #endregion //Fields
 
-        #region Constructor(s)
-
-        public FtpServer()
-            : this(Const.DefaultFtpPort)
-        { }
-
-        public FtpServer(int port)
-            : this(IPAddress.Any, port)
-        { }
-
-        public FtpServer(IPAddress ipAddress, int port)
-        {
-            _tcpListener = new TcpListener(ipAddress, port);
-            _listenerThread = new Thread(this.ListenForConnections);
-        }
-
-        #endregion //Constructor(s)
-
         #region Interface
 
-        public void Start()
+        public static void Start()
         {
-            _listenerThread.Start();
+            Start(Const.DefaultFtpPort);
+        }
+
+        public static void Start(int port)
+        {
+            Start(IPAddress.Any, port);
+        }
+
+        public static void Start(IPAddress ipAddress, int port)
+        {
+            _tcpListener = new TcpListener(ipAddress, port);
+            new Thread(ListenForConnections).Start();
+        }
+
+        public static void CloseConnection(FtpClient client)
+        {
+            _connectedClients.Remove(client);
+
+            _logger.Write(String.Format("Connection with {0} closed.", client.EndPoint));
+
+            client.CloseConnection();
         }
 
         #endregion //Interface
 
         #region Implementation
 
-        private void ListenForConnections()
+        private static void ListenForConnections()
         {
             _tcpListener.Start();
 
@@ -61,13 +62,15 @@ namespace BaconFTP.Server
 
                 _connectedClients.Add(ftpClient);
 
-                new Thread(new ParameterizedThreadStart(this.HandleClientConnection)).Start(ftpClient);                
+                new Thread(new ParameterizedThreadStart(HandleClientConnection)).Start(ftpClient);                
             }
         }
 
-        private void HandleClientConnection(object client)
+        private static void HandleClientConnection(object client)
         {
             FtpClient ftpClient = (FtpClient)client;
+
+            _logger.Write(String.Format("Connection with {0} established.", ftpClient.EndPoint));
 
             FtpProtocol protocol = new FtpProtocol(ftpClient, _logger);
 
@@ -75,12 +78,6 @@ namespace BaconFTP.Server
                 protocol.ListenForCommands();
             else
                 CloseConnection(ftpClient);
-        }
-
-        private void CloseConnection(FtpClient client)
-        {
-            _connectedClients.Remove(client);
-            client.CloseConnection();
         }
 
         #endregion //implementation
