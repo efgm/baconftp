@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using BaconFTP.Data;
 using BaconFTP.Data.Repositories;
+using BaconFTP.Data.Logger;
 
 namespace BaconFTP.Server
 {
@@ -12,10 +13,12 @@ namespace BaconFTP.Server
     {
         private readonly FtpClient _client;
         private readonly IAccountRepository _accRepo = new AccountRepository();
+        private readonly ILogger _logger;
 
-        public FtpProtocol(FtpClient client)
+        public FtpProtocol(FtpClient client, ILogger logger)
         {
             _client = client;
+            _logger = logger;
         }
 
         #region IFtpProtocol Members

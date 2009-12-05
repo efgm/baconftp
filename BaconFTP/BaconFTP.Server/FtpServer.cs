@@ -5,18 +5,22 @@ using System.Text;
 using System.Net.Sockets;
 using System.Threading;
 using System.Net;
+using BaconFTP.Data.Logger;
 
 namespace BaconFTP.Server
 {
     public class FtpServer
     {
-        #region Properties
+        #region Fields
         
         private readonly TcpListener _tcpListener;
         private readonly Thread _listenerThread;
         private readonly List<FtpClient> _connectedClients = new List<FtpClient>();
         
-        #endregion //Properties
+        //por ahora, despues hay que implementar uno para hacerlo en un archivo.
+        private readonly ILogger _logger = new ConsoleLogger();
+        
+        #endregion //Fields
 
         #region Constructor(s)
 
@@ -65,7 +69,7 @@ namespace BaconFTP.Server
         {
             FtpClient ftpClient = (FtpClient)client;
 
-            FtpProtocol protocol = new FtpProtocol(ftpClient);
+            FtpProtocol protocol = new FtpProtocol(ftpClient, _logger);
 
             if (protocol.PerformHandShake())
                 protocol.ListenForCommands();
