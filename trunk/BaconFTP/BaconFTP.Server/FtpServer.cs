@@ -17,7 +17,7 @@ namespace BaconFTP.Server
         private static List<FtpClient> _connectedClients = new List<FtpClient>();
         
         //por ahora, despues hay que implementar uno para hacerlo en un archivo.
-        private static ILogger _logger = new ConsoleLogger();
+        private static ILogger _logger = new FileLogger();
         
         #endregion //Fields
 
@@ -37,6 +37,8 @@ namespace BaconFTP.Server
         {
             _tcpListener = new TcpListener(ipAddress, port);
             new Thread(ListenForConnections).Start();
+
+            _logger.Write("Server started successfully.");
         }
 
         public static void CloseConnection(FtpClient client)
