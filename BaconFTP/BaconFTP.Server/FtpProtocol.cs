@@ -21,20 +21,18 @@ namespace BaconFTP.Server
         #region IFtpProtocol Members
 
         //valida el usuario y da acceso
-        public void PerformHandShake()
+        public bool PerformHandShake()
         {
             SendMessageToClient(Const.WelcomeMessage);
 
             GetClientUsername();
 
             if (!String.IsNullOrEmpty(_client.Username))
-            {
-                if (_client.Username == Const.AnonymousUser)
-                    AuthenticateAnonymousUser();
+                return _client.Username == Const.AnonymousUser ? 
+                    AuthenticateAnonymousUser() : AuthenticateUser();
 
-                else
-                    AuthenticateUser();
-            }
+            return false;
+
         }
 
         //escuchar infinitamente los comandos del cliente conectado.
@@ -142,10 +140,12 @@ namespace BaconFTP.Server
 
         #region Authentication
 
-        private void AuthenticateAnonymousUser()
+        private bool AuthenticateAnonymousUser()
         {
             SendMessageToClient(Const.AnonymousUserAllowedMessage);
             GetAnonymousPasswordAndValidate();
+
+            return true;
         }
 
         private bool AuthenticateUser()
