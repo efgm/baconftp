@@ -53,6 +53,8 @@ namespace BaconFTP.Server
                         break;
                     }
 
+                    if (cmd.Command == Const.UserCommand) HandleUserCommand();
+
                     else
                         SendMessageToClient(Const.UnknownCommandErrorMessage);
                 }
@@ -138,6 +140,10 @@ namespace BaconFTP.Server
             FtpServer.CloseConnection(_client);
         }
 
+        private void HandleUserCommand()
+        {
+            SendMessageToClient(Const.UserLoggedInMessage);
+        }
 
         #endregion //CommandHandling
 
@@ -160,7 +166,9 @@ namespace BaconFTP.Server
                 SendMessageToClient(Const.UserOkNeedPasswordMessage);
                 GetPasswordFromUser();
 
-                if (_accRepo.GetByUsername(_client.Username).Password == _client.Password)
+                Account user = _accRepo.GetByUsername(_client.Username);
+
+                if (user != null && user.Password == _client.Password)
                 {
                     SendMessageToClient(Const.UserLoggedInMessage);
 

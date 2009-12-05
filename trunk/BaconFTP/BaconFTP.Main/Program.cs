@@ -6,6 +6,7 @@ using System.Text;
 using BaconFTP.Server;
 using BaconFTP.Data.Repositories;
 using BaconFTP.Data;
+using System.Threading;
 
 namespace BaconFTP.Main
 {
