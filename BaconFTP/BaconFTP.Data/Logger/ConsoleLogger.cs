@@ -11,7 +11,11 @@ namespace BaconFTP.Data.Logger
 
         public void Write(string message)
         {
-            Console.WriteLine("** " + DateTime.Now + ": " + message + " **");
+            //para evitar que varios threads escriban al mismo tiempo
+            lock (this)
+            {
+                Console.WriteLine("** " + DateTime.Now + ": " + message + " **");
+            }                
         }
 
         #endregion
