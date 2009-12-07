@@ -52,6 +52,7 @@
     <Compile Include="IFtpProtocol.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FtpServer.cs" />
+    <Compile Include="ServerConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaconFTP.Data\BaconFTP.Data.csproj">

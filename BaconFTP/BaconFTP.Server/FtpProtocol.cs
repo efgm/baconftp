@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Threading;
 using BaconFTP.Data;
 using BaconFTP.Data.Repositories;
@@ -54,6 +55,12 @@ namespace BaconFTP.Server
                     }
 
                     if (cmd.Command == Const.UserCommand) HandleUserCommand();
+                    
+                    if (cmd.Command == Const.SystCommand) HandleSystCommand();
+
+                    if (cmd.Command == Const.CwdCommand) HandleCwdCommand(cmd.Arguments);
+
+                    if (cmd.Command == Const.CdupCommand) HandleCdupCommand();
 
                     else
                         SendMessageToClient(Const.UnknownCommandErrorMessage);
@@ -145,6 +152,32 @@ namespace BaconFTP.Server
             SendMessageToClient(Const.UserLoggedInMessage);
         }
 
+        private void HandleSystCommand()
+        {
+            SendMessageToClient(Const.SystemDescriptionMessage);
+        }
+
+        private void HandleCwdCommand(IList<string> Args) 
+        {
+            if (Directory.Exists(Args.First()))
+            {
+                Const.CurrentWorkingDirectory = Args.First();
+                SendMessageToClient(Const.ChangeWorkingDirectoryMessage + Const._currentWorkingDirectory);
+                _logger.Write("Current Working Directory changed to: " + Args.First());
+            }
+            else
+            {
+                SendMessageToClient(Const.SyntaxErrorInParametersMessage);
+            }
+        }
+
+        private void HandleCdupCommand() 
+        {
+            Const.CurrentWorkingDirectory = new DirectoryInfo(Const._currentWorkingDirectory).Parent.Name;
+            SendMessageToClient(Const.ChangeWorkingDirectoryMessage + Const._currentWorkingDirectory);
+            _logger.Write("Current Working Directory changed to Parent Directory: " + Const._currentWorkingDirectory);
+        }
+
         #endregion //CommandHandling
 
         #region Authentication
@@ -189,8 +222,6 @@ namespace BaconFTP.Server
         }
 
         #endregion //Authentication
-
-
 
         #endregion //Implementation
     }
