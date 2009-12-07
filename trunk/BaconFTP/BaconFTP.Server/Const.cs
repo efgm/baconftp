@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace BaconFTP.Server
 {
@@ -10,12 +11,19 @@ namespace BaconFTP.Server
         CommandNotImplemented = 120,
         Okay = 200,
         FileOkay = 202,
+        CommandSuccessful = 250,
+        ServerOffline = 421,
+        SyntaxErrorInParameters = 501,
         DirectoryStatus = 212,
         FileStatus = 213,
         ServerClosingConnection = 221,
         UserLoggedIn = 230,
+        SystemDescrption = 215,
         
         UserOkay = 331,
+        NoUserAuthenticated = 530,
+
+        FileNotFoundOrNoAccess = 550,
 
         Error = 500,
         NotLoggedIn = 530,
@@ -23,6 +31,9 @@ namespace BaconFTP.Server
 
     internal class Const
     {
+        internal static string _currentWorkingDirectory = string.Empty;
+        //internal static string _currentParentDirectory = string.Empty;
+
         #region Constants
         
         internal static int DefaultFtpPort 
@@ -33,6 +44,12 @@ namespace BaconFTP.Server
         internal static string AnonymousUser
         {
             get { return "anonymous"; }
+        }
+
+        internal static string CurrentWorkingDirectory 
+        {
+            get { return _currentWorkingDirectory; }
+            set { _currentWorkingDirectory = value; }
         }
 
         #endregion //Constants
@@ -74,9 +91,26 @@ namespace BaconFTP.Server
             get { return ((int)Codes.NotLoggedIn) + " Login authentication failed.\n"; }
         }
 
+        internal static string SystemDescriptionMessage
+        {
+            get { return ((int)Codes.SystemDescrption) + " Windows XP.\n"; }
+        }
+
+        internal static string ChangeWorkingDirectoryMessage 
+        {
+            get { return ((int)Codes.CommandSuccessful).ToString() + "\n"; }
+        }
+
+        internal static string SyntaxErrorInParametersMessage 
+        {
+            get { return ((int)Codes.SyntaxErrorInParameters) + " Directory not found or missing parameter.\n"; }
+        }
+
         #endregion //Messages
 
         #region Commands
+
+        #region Access Controls Commands
 
         internal static string UserCommand
         {
@@ -88,9 +122,9 @@ namespace BaconFTP.Server
             get { return "PASS"; }
         }
 
-        internal static string PwdCommand
+        internal static string AcctCommand
         {
-            get { return "PWD"; }
+            get { return "ACCT"; }
         }
 
         internal static string CwdCommand
@@ -98,34 +132,23 @@ namespace BaconFTP.Server
             get { return "CWD"; }
         }
 
-        internal static string QuitCommand
-        {
-            get { return "QUIT"; }
-        }
-        
         internal static string CdupCommand
         {
             get { return "CDUP"; }
         }
 
-        internal static string StorCommand
+        internal static string QuitCommand
         {
-            get { return "STOR"; }
+            get { return "QUIT"; }
         }
 
-        internal static string RetrCommand
-        {
-            get { return "RETR"; }
-        }
+        #endregion
 
-        internal static string MkdCommand
-        {
-            get { return "MKD"; }
-        }
+        #region Transfer Parameters Commands
 
-        internal static string RmdCommand
+        internal static string PortCommand
         {
-            get { return "RMD"; }
+            get { return "PORT"; }
         }
 
         internal static string PasvCommand
@@ -133,11 +156,87 @@ namespace BaconFTP.Server
             get { return "PASV"; }
         }
 
+        #endregion
+
+        #region FTP Service Commands
+
+        internal static string RetrCommand
+        {
+            get { return "RETR"; }
+        }
+
+        internal static string StorCommand
+        {
+            get { return "STOR"; }
+        }
+
+        internal static string StouCommand
+        {
+            get { return "STOU";}
+        }
+
+        internal static string AppeCommand
+        {
+            get { return "APPE"; }
+        }
+
+        internal static string RnfrCommand
+        {
+            get { return "RNFR"; }
+        }
+
+        internal static string RntoCommand 
+        {
+            get { return "RNTO"; }
+        }
+
+        internal static string DeleCommand 
+        {
+            get { return "DELE"; }
+        }
+
+        internal static string RmdCommand
+        {
+            get { return "RMD"; }
+        }
+
+        internal static string MkdCommand
+        {
+            get { return "MKD"; }
+        }
+
+        internal static string PwdCommand
+        {
+            get { return "PWD"; }
+        }
+
         internal static string ListCommand
         {
             get { return "LIST"; }
         }
-        
+
+        internal static string NlistCommand 
+        {
+            get { return "NLST"; }
+        }
+
+        internal static string SystCommand
+        {
+            get { return "SYST"; }
+        }
+
+        internal static string HelpCommand
+        {
+            get { return "HELP"; }
+        }
+
+        internal static string NoopCommand
+        {
+            get { return "NOOP"; }
+        }
+
+        #endregion
+
         #endregion //Commands
     }
 }
