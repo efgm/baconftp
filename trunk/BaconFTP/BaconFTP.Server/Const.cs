@@ -31,9 +31,6 @@ namespace BaconFTP.Server
 
     internal class Const
     {
-        internal static string _currentWorkingDirectory = string.Empty;
-        //internal static string _currentParentDirectory = string.Empty;
-
         #region Constants
         
         internal static int DefaultFtpPort 
@@ -44,12 +41,6 @@ namespace BaconFTP.Server
         internal static string AnonymousUser
         {
             get { return "anonymous"; }
-        }
-
-        internal static string CurrentWorkingDirectory 
-        {
-            get { return _currentWorkingDirectory; }
-            set { _currentWorkingDirectory = value; }
         }
 
         #endregion //Constants

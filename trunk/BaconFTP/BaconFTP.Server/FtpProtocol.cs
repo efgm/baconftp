@@ -15,6 +15,7 @@ namespace BaconFTP.Server
         private readonly FtpClient _client;
         private readonly IAccountRepository _accRepo = new AccountRepository();
         private readonly ILogger _logger;
+        private string _currentDirectory;
 
         public FtpProtocol(FtpClient client, ILogger logger)
         {
@@ -159,23 +160,23 @@ namespace BaconFTP.Server
 
         private void HandleCwdCommand(IList<string> Args) 
         {
-            if (Directory.Exists(Args.First()))
-            {
-                Const.CurrentWorkingDirectory = Args.First();
-                SendMessageToClient(Const.ChangeWorkingDirectoryMessage + Const._currentWorkingDirectory);
-                _logger.Write("Current Working Directory changed to: " + Args.First());
-            }
-            else
-            {
-                SendMessageToClient(Const.SyntaxErrorInParametersMessage);
-            }
+            //if (Directory.Exists(Args.First()))
+            //{
+            //    Const.CurrentWorkingDirectory = Args.First();
+            //    SendMessageToClient(Const.ChangeWorkingDirectoryMessage + Const._currentWorkingDirectory);
+            //    _logger.Write("Current Working Directory changed to: " + Args.First());
+            //}
+            //else
+            //{
+            //    SendMessageToClient(Const.SyntaxErrorInParametersMessage);
+            //}
         }
 
         private void HandleCdupCommand() 
         {
-            Const.CurrentWorkingDirectory = new DirectoryInfo(Const._currentWorkingDirectory).Parent.Name;
-            SendMessageToClient(Const.ChangeWorkingDirectoryMessage + Const._currentWorkingDirectory);
-            _logger.Write("Current Working Directory changed to Parent Directory: " + Const._currentWorkingDirectory);
+            //Const.CurrentWorkingDirectory = new DirectoryInfo(Const._currentWorkingDirectory).Parent.Name;
+            //SendMessageToClient(Const.ChangeWorkingDirectoryMessage + Const._currentWorkingDirectory);
+            //_logger.Write("Current Working Directory changed to Parent Directory: " + Const._currentWorkingDirectory);
         }
 
         #endregion //CommandHandling
