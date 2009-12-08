@@ -167,7 +167,7 @@ namespace BaconFTP.Server
         {
             string directory = args.First();
 
-            if (Directory.Exists(directory))
+            if (Directory.Exists(FtpServer.GetRealPath(directory)))
             {
                 _currentWorkingDirectory += directory;
                 SendMessageToClient(Const.ChangeWorkingDirectoryMessage + _currentWorkingDirectory);
