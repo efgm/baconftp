@@ -16,17 +16,19 @@ namespace BaconFTP.Server
         SyntaxErrorInParameters = 501,
         DirectoryStatus = 212,
         FileStatus = 213,
+        SystemDescrption = 215,
         ServerClosingConnection = 221,
         UserLoggedIn = 230,
-        SystemDescrption = 215,
+
+        WorkingDirectory = 257,
+        
         
         UserOkay = 331,
         NoUserAuthenticated = 530,
 
-        FileNotFoundOrNoAccess = 550,
-
         Error = 500,
         NotLoggedIn = 530,
+        FileNotFoundOrNoAccess = 550,
     }
 
     internal class Const
@@ -90,6 +92,11 @@ namespace BaconFTP.Server
         internal static string SyntaxErrorInParametersMessage 
         {
             get { return ((int)Codes.SyntaxErrorInParameters) + " Directory not found or missing parameter.\n"; }
+        }
+
+        internal static string CurrentWorkingDirectoryMessage(string directory)
+        {
+            return ((int)Codes.WorkingDirectory) + " '" + directory + "' is current working directory.\n";
         }
 
         #endregion //Messages

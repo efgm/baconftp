@@ -52,6 +52,12 @@ namespace BaconFTP.Server
             client.CloseConnection();
         }
 
+        //devuelve el path completo de un directorio virtual del server (ej "/" = c:\franklin\test")
+        public static string GetRealPath(string virtualPath)
+        {
+            return ServerConfiguration.ServerDirectoryPath + "\\" + virtualPath;
+        }
+
         #endregion //Interface
 
         #region Implementation
