@@ -15,7 +15,7 @@ namespace BaconFTP.Main
         static void Main(string[] args)
         {
             //prueba
-            FtpServer.Start(123);
+            FtpServer.Start();
         }
     }
 }
