@@ -7,6 +7,7 @@ using System.Threading;
 using BaconFTP.Data;
 using BaconFTP.Data.Repositories;
 using BaconFTP.Data.Logger;
+using BaconFTP.Data.Configuration;
 
 namespace BaconFTP.Server
 {
@@ -15,12 +16,14 @@ namespace BaconFTP.Server
         private readonly FtpClient _client;
         private readonly IAccountRepository _accRepo = new AccountRepository();
         private readonly ILogger _logger;
-        private string _currentDirectory;
+        private string _currentWorkingDirectory;
 
         public FtpProtocol(FtpClient client, ILogger logger)
         {
             _client = client;
             _logger = logger;
+
+            _currentWorkingDirectory = "/";
         }
 
         #region IFtpProtocol Members
@@ -62,6 +65,8 @@ namespace BaconFTP.Server
                     if (cmd.Command == Const.CwdCommand) HandleCwdCommand(cmd.Arguments);
 
                     if (cmd.Command == Const.CdupCommand) HandleCdupCommand();
+
+                    if (cmd.Command == Const.PwdCommand) HandlePwdCommand();
 
                     else
                         SendMessageToClient(Const.UnknownCommandErrorMessage);
@@ -158,25 +163,34 @@ namespace BaconFTP.Server
             SendMessageToClient(Const.SystemDescriptionMessage);
         }
 
-        private void HandleCwdCommand(IList<string> Args) 
+        private void HandleCwdCommand(IList<string> args) 
         {
-            //if (Directory.Exists(Args.First()))
-            //{
-            //    Const.CurrentWorkingDirectory = Args.First();
-            //    SendMessageToClient(Const.ChangeWorkingDirectoryMessage + Const._currentWorkingDirectory);
-            //    _logger.Write("Current Working Directory changed to: " + Args.First());
-            //}
-            //else
-            //{
-            //    SendMessageToClient(Const.SyntaxErrorInParametersMessage);
-            //}
+            string directory = args.First();
+
+            if (Directory.Exists(directory))
+            {
+                _currentWorkingDirectory += directory;
+                SendMessageToClient(Const.ChangeWorkingDirectoryMessage + _currentWorkingDirectory);
+
+                _logger.Write("Current Working Directory changed to: " + directory);
+            }
+            else
+            {
+                SendMessageToClient(Const.SyntaxErrorInParametersMessage);
+            }
         }
 
         private void HandleCdupCommand() 
         {
-            //Const.CurrentWorkingDirectory = new DirectoryInfo(Const._currentWorkingDirectory).Parent.Name;
-            //SendMessageToClient(Const.ChangeWorkingDirectoryMessage + Const._currentWorkingDirectory);
-            //_logger.Write("Current Working Directory changed to Parent Directory: " + Const._currentWorkingDirectory);
+            _currentWorkingDirectory = "/";  //new DirectoryInfo(Const._currentWorkingDirectory).Parent.Name;
+            SendMessageToClient(Const.ChangeWorkingDirectoryMessage + _currentWorkingDirectory);
+            
+            _logger.Write("Current Working Directory changed to Parent Directory: " + _currentWorkingDirectory);
+        }
+
+        private void HandlePwdCommand()
+        {
+            SendMessageToClient(Const.CurrentWorkingDirectoryMessage(_currentWorkingDirectory));
         }
 
         #endregion //CommandHandling
