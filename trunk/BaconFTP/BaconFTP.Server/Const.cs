@@ -32,11 +32,6 @@ namespace BaconFTP.Server
     internal class Const
     {
         #region Constants
-        
-        internal static int DefaultFtpPort 
-        {
-            get { return 21; }
-        }
 
         internal static string AnonymousUser
         {
@@ -84,7 +79,7 @@ namespace BaconFTP.Server
 
         internal static string SystemDescriptionMessage
         {
-            get { return ((int)Codes.SystemDescrption) + " Windows XP.\n"; }
+            get { return ((int)Codes.SystemDescrption) + " " + Environment.OSVersion + "\n"; }
         }
 
         internal static string ChangeWorkingDirectoryMessage 

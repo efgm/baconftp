@@ -18,9 +18,13 @@ namespace BaconFTP.Data.Configuration
 
     public static class ServerConfiguration
     {
+        #region Fields
+
         private static string _pathToXmlFile = Const.ServerConfigurationFilename;
         private static XDocument _configXmlFile = XDocument.Load(GetConfigurationFile());
-        private static XElement _root = _configXmlFile.Root;        
+        private static XElement _root = _configXmlFile.Root;
+
+        #endregion
 
         #region Interface
 
