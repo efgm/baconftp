@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Net;
 using BaconFTP.Data.Logger;
+using BaconFTP.Data.Configuration;
 
 namespace BaconFTP.Server
 {
@@ -26,7 +27,7 @@ namespace BaconFTP.Server
 
         public static void Start()
         {
-            Start(Const.DefaultFtpPort);
+            Start(ServerConfiguration.DefaultPort);
         }
 
         public static void Start(int port)
