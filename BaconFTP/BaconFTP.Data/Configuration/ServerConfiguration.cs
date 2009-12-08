@@ -7,12 +7,13 @@ using System.Xml.Linq;
 
 namespace BaconFTP.Data.Configuration
 {
-    internal static struct Const
+    internal static class Const
     {
         internal static string ServerDirectoryElement = "server_directory";
         internal static string ServerConfigurationFilename = "server_config.xml";
         internal static string DefaultPortElement = "default_port";
         internal static string ConfigurationRootElement = "baconftp_server_config";
+        internal static string ServerDirectoryName = "baconftpd";
     }
 
     public static class ServerConfiguration
@@ -23,11 +24,16 @@ namespace BaconFTP.Data.Configuration
 
         #region Interface
 
-        public static string GetServerDirectoryPath()
+        public static string ServerDirectoryPath
         {
-            return (from d in _root.Elements()
-                    where d.Name == Const.ServerDirectoryElement
-                    select d).Single().Value;
+            get { return GetValueFrom(Const.ServerDirectoryElement); }
+            set { SetValue(Const.ServerDirectoryElement, value); }
+        }
+
+        public static int DefaultPort
+        {
+            get { return Convert.ToInt32(GetValueFrom(Const.DefaultPortElement)); }
+            set { SetValue(Const.DefaultPortElement, value.ToString()); }
         }
 
         #endregion
@@ -43,25 +49,34 @@ namespace BaconFTP.Data.Configuration
 
         }
 
+        private static string GetValueFrom(string element)
+        {
+            return (from d in _root.Elements()
+                    where d.Name == element
+                    select d).Single().Value;
+        }
+
+        private static void SetValue(string element, string value)
+        {
+            _root.Element(element).Value = value;
+            _configXmlFile.Save(_pathToXmlFile);
+        }
+
         private static void GenerateConfigurationFile()
         {
             (new XDocument(
                 new XDeclaration("1.0", "utf-8", "yes"),
-                new XElement("baconftp_server_config", 
-                             new XElement("default_port", 21),
-                             new XElement("server_directory", CreateDefaultServerFolder())
+                new XElement(Const.ConfigurationRootElement,
+                             new XElement(Const.DefaultPortElement, 21),
+                             new XElement(Const.ServerDirectoryElement, CreateDefaultServerFolder().FullName)
                              )
                            )
              ).Save(_pathToXmlFile);
         }
 
-        private static string CreateDefaultServerFolder()
+        private static DirectoryInfo CreateDefaultServerFolder()
         {
-            const string dir = "baconftpd";
-            if (Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-
-            return dir;
+            return Directory.CreateDirectory(Const.ServerDirectoryName);
         }
 
         #endregion
