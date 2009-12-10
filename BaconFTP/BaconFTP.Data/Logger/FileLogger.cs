@@ -12,13 +12,13 @@ namespace BaconFTP.Data.Logger
         
         #region ILogger Members
 
-        public void Write(string message)
+        public void Write(string message, params object[] args)
         {
             lock (this)
             {
                 using (StreamWriter sw = File.AppendText(_logFile))
                 {
-                    sw.WriteLine("** " + DateTime.Now + ": " + message + " **");
+                    sw.WriteLine("** " + DateTime.Now + ": " + String.Format(message, args) + " **");
                 }
             }
         }

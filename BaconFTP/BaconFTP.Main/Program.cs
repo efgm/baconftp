@@ -14,8 +14,15 @@ namespace BaconFTP.Main
     {
         static void Main(string[] args)
         {
-            //prueba
-            FtpServer.Start();
+            try
+            {
+                FtpServer.Start();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(Const.FatalErrorFormatString, e.InnerException.Message);
+                Console.ReadKey();
+            }
         }
     }
 }

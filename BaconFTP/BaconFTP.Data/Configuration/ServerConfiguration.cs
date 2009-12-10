@@ -11,9 +11,10 @@ namespace BaconFTP.Data.Configuration
     {
         internal static string ServerDirectoryElement = "server_directory";
         internal static string ServerConfigurationFilename = "server_config.xml";
-        internal static string DefaultPortElement = "default_port";
-        internal static string ConfigurationRootElement = "baconftp_server_config";
         internal static string ServerDirectoryName = "baconftpd";
+        internal static string DefaultPortElement = "default_port";        
+        internal static string ConfigurationRootElement = "baconftp_server_config";
+        internal static string LoggingMethod = "logging_method";
     }
 
     public static class ServerConfiguration
@@ -21,12 +22,27 @@ namespace BaconFTP.Data.Configuration
         #region Fields
 
         private static string _pathToXmlFile = Const.ServerConfigurationFilename;
-        private static XDocument _configXmlFile = XDocument.Load(GetConfigurationFile());
-        private static XElement _root = _configXmlFile.Root;
+        private static XDocument _configXmlFile;// = XDocument.Load(GetConfigurationFile());
+        private static XElement _root; //= _configXmlFile.Root;
 
         #endregion
 
+        #region Constructor(s)
+
+        #endregion //Constructor(s)
+
         #region Interface
+
+        public static void Parse()
+        {
+            try
+            {
+                _configXmlFile = XDocument.Load(GetConfigurationFile());
+                _root = _configXmlFile.Root;
+            }
+
+            catch (Exception e) { throw e; }
+        }
 
         public static string ServerDirectoryPath
         {
@@ -34,11 +50,13 @@ namespace BaconFTP.Data.Configuration
             set { SetValue(Const.ServerDirectoryElement, value); }
         }
 
-        public static int DefaultPort
+        public static int ServerPort
         {
             get { return Convert.ToInt32(GetValueFrom(Const.DefaultPortElement)); }
             set { SetValue(Const.DefaultPortElement, value.ToString()); }
         }
+
+
 
         #endregion
 
@@ -72,7 +90,8 @@ namespace BaconFTP.Data.Configuration
                 new XDeclaration("1.0", "utf-8", "yes"),
                 new XElement(Const.ConfigurationRootElement,
                              new XElement(Const.DefaultPortElement, 21),
-                             new XElement(Const.ServerDirectoryElement, CreateDefaultServerFolder().FullName)
+                             new XElement(Const.ServerDirectoryElement, CreateDefaultServerFolder().FullName),
+                             new XElement(Const.LoggingMethod, "console")
                              )
                            )
              ).Save(_pathToXmlFile);

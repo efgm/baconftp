@@ -31,13 +31,23 @@ namespace BaconFTP.Server
         FileNotFoundOrNoAccess = 550,
     }
 
-    internal class Const
+    public class Const
     {
         #region Constants
 
         internal static string AnonymousUser
         {
             get { return "anonymous"; }
+        }
+
+        internal static string ServerVersion
+        {
+            get { return "0.1"; }
+        }
+
+        public static string FatalErrorFormatString
+        {
+            get { return "FATAL ERROR: Server could not start.\n\n{0}\n\nPress any key to exit."; }
         }
 
         #endregion //Constants
