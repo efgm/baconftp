@@ -7,6 +7,7 @@ using System.Threading;
 using System.Net;
 using BaconFTP.Data.Logger;
 using BaconFTP.Data.Configuration;
+using System.Diagnostics;
 
 namespace BaconFTP.Server
 {
@@ -18,16 +19,32 @@ namespace BaconFTP.Server
         private static Thread _listenerThread = new Thread(ListenForConnections);
         private static List<FtpClient> _connectedClients = new List<FtpClient>();
         
-        //por ahora, despues hay que implementar uno para hacerlo en un archivo.
+        //objeto thread que contiene referencia al thread principal del server.
+        private static Thread _mainThread;
+        
         private static ILogger _logger = new ConsoleLogger();
         
         #endregion //Fields
+
+        #region Constructor(s)
+
+        static FtpServer()
+        {
+            try 
+            { 
+                ServerConfiguration.Parse();
+                _mainThread = Thread.CurrentThread;
+            }
+            catch (Exception e) { throw e; }
+        }
+
+        #endregion
 
         #region Interface
 
         public static void Start()
         {
-            Start(ServerConfiguration.DefaultPort);
+            Start(ServerConfiguration.ServerPort);
         }
 
         public static void Start(int port)
@@ -38,14 +55,14 @@ namespace BaconFTP.Server
         public static void Start(IPAddress ipAddress, int port)
         {
             _tcpListener = new TcpListener(ipAddress, port);
-            _listenerThread.Start();            
+            _listenerThread.Start();
         }
 
         public static void CloseConnection(FtpClient client)
         {
             _connectedClients.Remove(client);
 
-            _logger.Write(String.Format("Connection with {0} closed.", client.EndPoint));
+            _logger.Write("Connection with {0} closed.", client.EndPoint);
 
             client.CloseConnection();
         }
@@ -66,7 +83,8 @@ namespace BaconFTP.Server
             {
                 _tcpListener.Start();
 
-                _logger.Write("Server started successfully.");
+                _logger.Write("BaconFTP Server v{0} started successfully.\nListening on port {1}",
+                              Const.ServerVersion, _tcpListener.LocalEndpoint.ToString().Split(':').Skip(1).First());
 
                 while (true)
                 {
@@ -77,14 +95,18 @@ namespace BaconFTP.Server
                     new Thread(new ParameterizedThreadStart(HandleClientConnection)).Start(ftpClient);
                 }
             }
-            catch (Exception e) { _logger.Write("Error: " + e.Message); }
+            catch (Exception e)
+            {
+                Console.WriteLine(Const.FatalErrorFormatString, e.Message);                
+                Console.ReadKey();
+            }
         }
 
         private static void HandleClientConnection(object client)
         {
             FtpClient ftpClient = (FtpClient)client;
 
-            _logger.Write(String.Format("Connection with {0} established.", ftpClient.EndPoint));
+            _logger.Write("Connection with {0} established.", ftpClient.EndPoint);
 
             FtpProtocol protocol = new FtpProtocol(ftpClient, _logger);
 

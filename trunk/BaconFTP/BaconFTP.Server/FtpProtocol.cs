@@ -202,8 +202,8 @@ namespace BaconFTP.Server
             SendMessageToClient(Const.AnonymousUserAllowedMessage);
             GetAnonymousPasswordAndValidate();
 
-            _logger.Write(String.Format("Logged in as \'{0}\' from {1}", 
-                                        _client.Username, _client.EndPoint));
+            _logger.Write("Logged in as \'{0}\' from {1}", 
+                           _client.Username, _client.EndPoint);
             return true;
         }
 
@@ -220,16 +220,16 @@ namespace BaconFTP.Server
                 {
                     SendMessageToClient(Const.UserLoggedInMessage);
 
-                    _logger.Write(String.Format("Logged in as \'{0}\' from {1}.", 
-                                                _client.Username, _client.EndPoint));
+                    _logger.Write("Logged in as \'{0}\' from {1}.", 
+                                  _client.Username, _client.EndPoint);
                     return true;
                 }
                 else
                 {
                     SendMessageToClient(Const.LoginFailedMessage);
 
-                    _logger.Write(String.Format("Login attempt from \'{0}\' as {1} failed.", 
-                                                _client.EndPoint, _client.Username));
+                    _logger.Write("Login attempt from \'{0}\' as {1} failed.", 
+                                  _client.EndPoint, _client.Username);
                     return false;
                 }                
             }
