@@ -38,9 +38,7 @@ namespace BaconFTP.Server
         public static void Start(IPAddress ipAddress, int port)
         {
             _tcpListener = new TcpListener(ipAddress, port);
-            _listenerThread.Start();
-
-            _logger.Write("Server started successfully.");
+            _listenerThread.Start();            
         }
 
         public static void CloseConnection(FtpClient client)
@@ -64,16 +62,22 @@ namespace BaconFTP.Server
 
         private static void ListenForConnections()
         {
-            _tcpListener.Start();
-
-            while (true)
+            try
             {
-                FtpClient ftpClient = new FtpClient(_tcpListener.AcceptTcpClient());
+                _tcpListener.Start();
 
-                _connectedClients.Add(ftpClient);
+                _logger.Write("Server started successfully.");
 
-                new Thread(new ParameterizedThreadStart(HandleClientConnection)).Start(ftpClient);
+                while (true)
+                {
+                    FtpClient ftpClient = new FtpClient(_tcpListener.AcceptTcpClient());
+
+                    _connectedClients.Add(ftpClient);
+
+                    new Thread(new ParameterizedThreadStart(HandleClientConnection)).Start(ftpClient);
+                }
             }
+            catch (Exception e) { _logger.Write("Error: " + e.Message); }
         }
 
         private static void HandleClientConnection(object client)
