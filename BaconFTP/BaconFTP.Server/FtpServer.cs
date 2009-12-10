@@ -17,10 +17,7 @@ namespace BaconFTP.Server
         
         private static TcpListener _tcpListener;
         private static Thread _listenerThread = new Thread(ListenForConnections);
-        private static List<FtpClient> _connectedClients = new List<FtpClient>();
-        
-        //objeto thread que contiene referencia al thread principal del server.
-        private static Thread _mainThread;
+        private static List<FtpClient> _connectedClients = new List<FtpClient>();        
         
         private static ILogger _logger = new ConsoleLogger();
         
@@ -33,7 +30,6 @@ namespace BaconFTP.Server
             try 
             { 
                 ServerConfiguration.Parse();
-                _mainThread = Thread.CurrentThread;
             }
             catch (Exception e) { throw e; }
         }
