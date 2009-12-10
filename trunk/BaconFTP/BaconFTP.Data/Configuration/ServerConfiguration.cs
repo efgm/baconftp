@@ -7,14 +7,16 @@ using System.Xml.Linq;
 
 namespace BaconFTP.Data.Configuration
 {
-    internal static class Const
+    public static class Const
     {
         internal static string ServerDirectoryElement = "server_directory";
         internal static string ServerConfigurationFilename = "server_config.xml";
         internal static string ServerDirectoryName = "baconftpd";
         internal static string DefaultPortElement = "default_port";        
         internal static string ConfigurationRootElement = "baconftp_server_config";
-        internal static string LoggingMethod = "logging_method";
+        internal static string LoggingMethodElement = "logging_method";
+        public static string ConsoleLogginMethod = "console";
+        public static string FileLoggingMethod = "file";
     }
 
     public static class ServerConfiguration
@@ -91,7 +93,7 @@ namespace BaconFTP.Data.Configuration
                 new XElement(Const.ConfigurationRootElement,
                              new XElement(Const.DefaultPortElement, 21),
                              new XElement(Const.ServerDirectoryElement, CreateDefaultServerFolder().FullName),
-                             new XElement(Const.LoggingMethod, "console")
+                             new XElement(Const.LoggingMethodElement, Const.FileLoggingMethod)
                              )
                            )
              ).Save(_pathToXmlFile);
