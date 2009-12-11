@@ -118,9 +118,9 @@ namespace BaconFTP.Data.Configuration
         {
             (new XDocument(
                 new XDeclaration("1.0", "utf-8", "yes"),
-                new XElement(Const.ConfigurationRootElement,
-                             new XElement(Const.DefaultPortElement, 21),
+                new XElement(Const.ConfigurationRootElement,                             
                              new XElement(Const.ServerDirectoryElement, CreateDefaultServerFolder().FullName),
+                             new XElement(Const.DefaultPortElement, 21),
                              new XElement(Const.LoggingMethodElement, Const.ConsoleLogginMethod)
                              )
                            )
