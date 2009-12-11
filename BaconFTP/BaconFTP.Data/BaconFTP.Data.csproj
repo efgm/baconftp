@@ -49,13 +49,14 @@
     <Compile Include="Configuration\ServerConfiguration.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Exceptions.cs" />
     <Compile Include="Logger\ConsoleLogger.cs" />
     <Compile Include="Logger\FileLogger.cs" />
     <Compile Include="Logger\ILogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\AccountRepository.cs" />
     <Compile Include="Repositories\IAccountRepository.cs" />
-    <Compile Include="Utilities\Const.cs" />
+    <Compile Include="Const.cs" />
     <Compile Include="Utilities\Encryp_Decrypt.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

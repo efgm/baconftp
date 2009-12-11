@@ -4,19 +4,21 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Xml.Linq;
+using BaconFTP.Data.Logger;
+using BaconFTP.Data.Exceptions;
 
 namespace BaconFTP.Data.Configuration
 {
     public static class Const
     {
-        internal static string ServerDirectoryElement = "server_directory";
+        internal static string ServerDirectoryElement = "directory";
         internal static string ServerConfigurationFilename = "server_config.xml";
         internal static string ServerDirectoryName = "baconftpd";
-        internal static string DefaultPortElement = "default_port";        
-        internal static string ConfigurationRootElement = "baconftp_server_config";
-        internal static string LoggingMethodElement = "logging_method";
-        public static string ConsoleLogginMethod = "console";
-        public static string FileLoggingMethod = "file";
+        internal static string DefaultPortElement = "port";        
+        internal static string ConfigurationRootElement = "baconftp_config";
+        internal static string LoggingMethodElement = "logging";
+        internal static string ConsoleLogginMethod = "console";
+        internal static string FileLoggingMethod = "file";
     }
 
     public static class ServerConfiguration
@@ -24,8 +26,8 @@ namespace BaconFTP.Data.Configuration
         #region Fields
 
         private static string _pathToXmlFile = Const.ServerConfigurationFilename;
-        private static XDocument _configXmlFile;// = XDocument.Load(GetConfigurationFile());
-        private static XElement _root; //= _configXmlFile.Root;
+        private static XDocument _configXmlFile;
+        private static XElement _root;
 
         #endregion
 
@@ -41,6 +43,20 @@ namespace BaconFTP.Data.Configuration
             {
                 _configXmlFile = XDocument.Load(GetConfigurationFile());
                 _root = _configXmlFile.Root;
+
+                if (_root.HasElements)
+                {
+                    if (_root.Element(Const.LoggingMethodElement) == null)
+                        throw new LoggingElementNotFoundException();
+
+                    else if (_root.Element(Const.DefaultPortElement) == null)
+                        throw new ServerPortElementNotFoundException();
+
+                    else if (_root.Element(Const.ServerDirectoryElement) == null)
+                        throw new DirectoryElementNotFoundException();
+                }
+                else
+                    throw new ConfigurationFileIsEmptyException();
             }
 
             catch (Exception e) { throw e; }
@@ -58,7 +74,19 @@ namespace BaconFTP.Data.Configuration
             set { SetValue(Const.DefaultPortElement, value.ToString()); }
         }
 
+        public static ILogger GetLoggerInstance()
+        {
+            string loggerTagValue = GetValueFrom(Const.LoggingMethodElement);
 
+            if (loggerTagValue == Const.FileLoggingMethod)
+                return new FileLogger();
+
+            else if (loggerTagValue == Const.ConsoleLogginMethod)
+                return new ConsoleLogger();
+
+            else
+                throw new LoggingMethodUnknownException();
+        }
 
         #endregion
 
@@ -93,7 +121,7 @@ namespace BaconFTP.Data.Configuration
                 new XElement(Const.ConfigurationRootElement,
                              new XElement(Const.DefaultPortElement, 21),
                              new XElement(Const.ServerDirectoryElement, CreateDefaultServerFolder().FullName),
-                             new XElement(Const.LoggingMethodElement, Const.FileLoggingMethod)
+                             new XElement(Const.LoggingMethodElement, Const.ConsoleLogginMethod)
                              )
                            )
              ).Save(_pathToXmlFile);

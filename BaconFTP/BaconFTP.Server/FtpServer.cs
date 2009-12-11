@@ -19,7 +19,7 @@ namespace BaconFTP.Server
         private static Thread _listenerThread = new Thread(ListenForConnections);
         private static List<FtpClient> _connectedClients = new List<FtpClient>();        
         
-        private static ILogger _logger = new ConsoleLogger();
+        private static ILogger _logger;
         
         #endregion //Fields
 
@@ -51,6 +51,8 @@ namespace BaconFTP.Server
         public static void Start(IPAddress ipAddress, int port)
         {
             _tcpListener = new TcpListener(ipAddress, port);
+            _logger = ServerConfiguration.GetLoggerInstance();
+
             _listenerThread.Start();
         }
 
