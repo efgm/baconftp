@@ -35,7 +35,7 @@ namespace BaconFTP.Data.Repositories
                             AccountID = new Guid(a.Attribute("id").Value),
                             Username = username,
                             Password = Encryp_Decrypt.Decrypt(a.Attribute("password").Value, 
-                                                              Utilities.Const.ClearTextForEncriptDecript)
+                                                              Const.ClearTextForEncriptDecript)
                         }).Single();
             }
             catch { return null; }
@@ -48,7 +48,7 @@ namespace BaconFTP.Data.Repositories
                                    new XAttribute("id", a.AccountID),
                                    new XAttribute("username", a.Username),
                                    new XAttribute("password", Encryp_Decrypt.Encrypt(a.Password,
-                                                                                     Utilities.Const.ClearTextForEncriptDecript))
+                                                                                     Const.ClearTextForEncriptDecript))
                                    )
                      );
 
