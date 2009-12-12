@@ -52,11 +52,7 @@ namespace BaconFTP.Server
                 {
                     ClientCommand cmd = GetCommandFromClient();
 
-                    if (cmd.Command == Const.QuitCommand)
-                    {
-                        HandleQuitCommand();
-                        break;
-                    }
+                    if (cmd.Command == Const.QuitCommand){ HandleQuitCommand(); break; }
 
                     if (cmd.Command == Const.UserCommand) HandleUserCommand();
                     
@@ -68,8 +64,7 @@ namespace BaconFTP.Server
 
                     if (cmd.Command == Const.PwdCommand) HandlePwdCommand();
 
-                    else
-                        SendMessageToClient(Const.UnknownCommandErrorMessage);
+                    else SendMessageToClient(Const.UnknownCommandErrorMessage);
                 }
                 catch { continue; }
             }
