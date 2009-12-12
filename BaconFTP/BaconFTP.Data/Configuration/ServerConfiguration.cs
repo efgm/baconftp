@@ -31,10 +31,6 @@ namespace BaconFTP.Data.Configuration
 
         #endregion
 
-        #region Constructor(s)
-
-        #endregion //Constructor(s)
-
         #region Interface
 
         public static void Parse()
