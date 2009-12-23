@@ -23,6 +23,15 @@ namespace BaconFTP.Server
         
         #endregion //Fields
 
+        #region Properties
+
+        public static IPAddress ServerIP
+        {
+            get { return IPAddress.Parse(_tcpListener.LocalEndpoint.ToString().Split(':').First()); }
+        }
+
+        #endregion
+
         #region Constructor(s)
 
         static FtpServer()

@@ -64,6 +64,10 @@ namespace BaconFTP.Server
 
                     if (cmd.Command == Const.PwdCommand) HandlePwdCommand();
 
+                    if (cmd.Command == Const.PasvCommand) HandlePasvCommand();
+
+                    if (cmd.Command == Const.TypeCommand) HandleTypeCommand();
+
                     else SendMessageToClient(Const.UnknownCommandErrorMessage);
                 }
                 catch { continue; }
@@ -186,6 +190,16 @@ namespace BaconFTP.Server
         private void HandlePwdCommand()
         {
             SendMessageToClient(Const.CurrentWorkingDirectoryMessage(_currentWorkingDirectory));
+        }
+
+        private void HandlePasvCommand()
+        {
+            SendMessageToClient(Const.PasvCommandReplyMessage);
+        }
+
+        private void HandleTypeCommand()
+        {
+            SendMessageToClient("200 Type set to I.\n");
         }
 
         #endregion //CommandHandling
