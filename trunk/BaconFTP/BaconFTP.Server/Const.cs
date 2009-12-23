@@ -18,6 +18,7 @@ namespace BaconFTP.Server
         FileStatus = 213,
         SystemDescrption = 215,
         ServerClosingConnection = 221,
+        PassiveMode = 227,
         UserLoggedIn = 230,
 
         WorkingDirectory = 257,
@@ -109,6 +110,21 @@ namespace BaconFTP.Server
             return ((int)Codes.WorkingDirectory) + " '" + directory + "' is current working directory.\n";
         }
 
+        internal static string PasvCommandReplyMessage
+        {
+            get
+            {
+                string[] serverIp = FtpServer.ServerIP.ToString().Split('.');
+
+                return String.Format(((int)Codes.PassiveMode) +
+                                     " Entering Passive Mode. ({0},{1},{2},{3},{4},{5}).\n", serverIp[0],
+                                                                                             serverIp[1],
+                                                                                             serverIp[2],
+                                                                                             serverIp[3],
+                                                                                             20,
+                                                                                             30);
+            }
+        }
         #endregion //Messages
 
         #region Commands
@@ -236,6 +252,11 @@ namespace BaconFTP.Server
         internal static string NoopCommand
         {
             get { return "NOOP"; }
+        }
+
+        internal static string TypeCommand
+        {
+            get { return "TYPE"; }
         }
 
         #endregion
