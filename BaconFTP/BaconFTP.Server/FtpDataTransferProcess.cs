@@ -17,6 +17,10 @@ namespace BaconFTP.Server
             _logger = logger;
         }
 
+        public void GetDirectoryListing()
+        {
+        }
+
         public void ListenForConnections()
         {
             #region ejemplo, no va asi
@@ -55,5 +59,24 @@ namespace BaconFTP.Server
 
             #endregion
         }
+
+        #region Implementation
+
+        private byte[] Encode(string str)
+        {
+            return Encoding.ASCII.GetBytes(str);
+        }
+
+        private string Decode(byte[] bytes)
+        {
+            return Encoding.ASCII.GetString(bytes);
+        }
+
+        private void SendDataToClient(string data)
+        {
+
+        }
+
+        #endregion
     }
 }

@@ -106,21 +106,21 @@ namespace BaconFTP.Server
             return ((int)Codes.WorkingDirectory) + " '" + directory + "' is current working directory.\r\n";
         }
 
-        internal static string PasvCommandReplyMessage
-        {
-            get
-            {
-                string[] serverIp = FtpServer.ServerIP.ToString().Split('.');
+        //internal static string PasvCommandReplyMessage
+        //{
+        //    get
+        //    {
+        //        string[] serverIp = FtpServer.ServerIP.ToString().Split('.');
 
-                return String.Format(((int)Codes.PassiveMode) +
-                                     " Entering Passive Mode ({0},{1},{2},{3},{4},{5}).\r\n", 127,//serverIp[0],
-                                                                                             0,//serverIp[1],
-                                                                                             0,//serverIp[2],
-                                                                                             1,//serverIp[3],
-                                                                                             14,
-                                                                                             178);
-            }
-        }
+        //        return String.Format(((int)Codes.PassiveMode) +
+        //                             " Entering Passive Mode ({0},{1},{2},{3},{4},{5}).\r\n", 127,//serverIp[0],
+        //                                                                                     0,//serverIp[1],
+        //                                                                                     0,//serverIp[2],
+        //                                                                                     1,//serverIp[3],
+        //                                                                                     14,
+        //                                                                                     178);
+        //    }
+        //}
         #endregion //Messages
 
         #region Commands
