@@ -88,7 +88,7 @@ namespace BaconFTP.Server
 
         private void SendDataToClient(TcpClient dataClient, string data)
         {
-
+            dataClient.GetStream().Write(Encode(data), 0, data.Length);
         }
 
         private void SendMessageToClient(string message)
