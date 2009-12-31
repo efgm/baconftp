@@ -225,7 +225,7 @@ namespace BaconFTP.Server
             StringBuilder sb = new StringBuilder();
 
             string pasvReply = (int)Codes.PassiveMode +
-                               String.Format(" Entering Passive Mode ({0},{1},{2},{3},{4},{5}).\r\n",
+                               String.Format(" Entering Passive Mode ({0},{1},{2},{3},{4},{5}).\r\n.",
                                              127, 0, 0, 1,
                                              (_dataPort - (_dataPort % 256)) / 256,
                                              _dataPort % 256);
