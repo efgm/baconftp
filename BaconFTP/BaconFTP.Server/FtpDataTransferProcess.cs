@@ -10,11 +10,13 @@ namespace BaconFTP.Server
         private readonly FtpClient _client;
         private readonly ILogger _logger;
         private readonly TcpListener _tcpListener = new TcpListener(IPAddress.Any, 3762);
+        private readonly int _dataPort;
 
-        internal FtpDataTransferProcess(FtpClient client, ILogger logger)
+        internal FtpDataTransferProcess(FtpClient client, ILogger logger, int dataPort)
         {
             _client = client;
             _logger = logger;
+            _dataPort = dataPort;
         }
 
         public void GetDirectoryListing()
