@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="ClientCommand.cs" />
     <Compile Include="Const.cs" />
+    <Compile Include="FtpDataTransferProcess.cs" />
     <Compile Include="FtpClient.cs" />
     <Compile Include="FtpProtocolInterpreter.cs" />
     <Compile Include="IFtpProtocol.cs" />
