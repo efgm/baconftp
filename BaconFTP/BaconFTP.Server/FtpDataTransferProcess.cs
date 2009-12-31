@@ -20,11 +20,22 @@ namespace BaconFTP.Server
             _tcpListener = new TcpListener(IPAddress.Any, dataPort);
         }
 
-        public void GetDirectoryListing()
+        internal void SendDirectoryListing(object dir)
         {
+            SendMessageToClient(Const.OpeningDataConnectionMessage("BINARY"));
+
+            _tcpListener.Start();
+            TcpClient dataClient = _tcpListener.AcceptTcpClient();
+
+            SendDataToClient(dataClient, GenerateDirectoryList(dir as string));
+
+            dataClient.Close();
+            _tcpListener.Stop();
+
+            SendMessageToClient(Const.TransferCompleteMessage);
         }
 
-        public void ListenForConnections()
+        internal void ListenForConnections()
         {
             #region ejemplo, no va asi
 
@@ -75,10 +86,21 @@ namespace BaconFTP.Server
             return Encoding.ASCII.GetString(bytes);
         }
 
-        private void SendDataToClient(string data)
+        private void SendDataToClient(TcpClient dataClient, string data)
         {
 
         }
+
+        private void SendMessageToClient(string message)
+        {
+            _client.Stream.Write(Encode(message), 0, message.Length);
+        }
+
+        private string GenerateDirectoryList(string dir)
+        {
+            throw new System.NotImplementedException();
+        }
+
 
         #endregion
     }
