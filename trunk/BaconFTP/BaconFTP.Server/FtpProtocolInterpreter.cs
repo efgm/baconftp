@@ -16,6 +16,7 @@ namespace BaconFTP.Server
         private readonly IAccountRepository _accRepo = new AccountRepository();
         private readonly ILogger _logger;
         private string _currentWorkingDirectory;
+        private int _dataPort;
 
         internal FtpProtocolInterpreter(FtpClient client, ILogger logger)
         {
@@ -195,11 +196,18 @@ namespace BaconFTP.Server
 
         private void HandlePasvCommand()
         {
-            SendMessageToClient(Const.PasvCommandReplyMessage);
+            int port
+            //SendMessageToClient();
+        }
+
+        private int GenerateDataPort()
+        {
+            return 0;
         }
 
         private void HandleTypeCommand()
         {
+            //temporal
             SendMessageToClient("200 Type set to I.\n");
         }
 
