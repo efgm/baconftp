@@ -11,14 +11,14 @@ using BaconFTP.Data.Configuration;
 
 namespace BaconFTP.Server
 {
-    internal class FtpProtocol : IFtpProtocol
+    internal class FtpProtocolInterpreter : IFtpProtocol
     {
         private readonly FtpClient _client;
         private readonly IAccountRepository _accRepo = new AccountRepository();
         private readonly ILogger _logger;
         private string _currentWorkingDirectory;
 
-        public FtpProtocol(FtpClient client, ILogger logger)
+        public FtpProtocolInterpreter(FtpClient client, ILogger logger)
         {
             _client = client;
             _logger = logger;
