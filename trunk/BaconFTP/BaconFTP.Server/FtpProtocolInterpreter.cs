@@ -7,6 +7,8 @@ using System.Threading;
 using BaconFTP.Data;
 using BaconFTP.Data.Repositories;
 using BaconFTP.Data.Logger;
+using System.Net.Sockets;
+using System.Net;
 
 namespace BaconFTP.Server
 {
@@ -196,13 +198,37 @@ namespace BaconFTP.Server
 
         private void HandlePasvCommand()
         {
-            int port
-            //SendMessageToClient();
+            int port = GenerateDataPort();
+
+            /* formulita para sacar el octeto 1 del puerto para el reply = (port - (port % 256)) / 256
+             * para el octeto2 = port % 256
+             */
+            StringBuilder sb = new StringBuilder();
+
+            string pasvReply = (int)Codes.PassiveMode +
+                               String.Format(" Entering Passive Mode ({0},{1},{2},{3},{4},{5})\r\n.",
+                                             127, 0, 0, 1,
+                                             (port - (port % 256)) / 256,
+                                             port % 256);
         }
 
         private int GenerateDataPort()
         {
-            return 0;
+            int port = (new Random()).Next(1024, 65536);
+            return PortIsAvailable(port) ? port : GenerateDataPort();
+        }
+
+        private bool PortIsAvailable(int port)
+        {
+            try 
+            { 
+                (new TcpClient(new IPEndPoint(IPAddress.Any, port))).Close(); 
+                return true; 
+            }
+            catch 
+            { 
+                return false; 
+            }
         }
 
         private void HandleTypeCommand()
@@ -213,7 +239,7 @@ namespace BaconFTP.Server
 
         private void HandleListCommand()
         {
-            var dtp = new FtpDataTransferProcess(_client, _logger);
+            var dtp = new FtpDataTransferProcess(_client, _logger, 4);
 
             new Thread(dtp.ListenForConnections).Start();
         }
