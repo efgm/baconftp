@@ -5,8 +5,10 @@ namespace BaconFTP.Server
     internal enum Codes
     {   
         CommandNotImplemented = 120,
+        DataConnection = 150,
         Okay = 200,
         FileOkay = 202,
+        TransferComplete = 226,
         CommandSuccessful = 250,
         ServerOffline = 421,
         SyntaxErrorInParameters = 501,
@@ -101,26 +103,21 @@ namespace BaconFTP.Server
             get { return ((int)Codes.SyntaxErrorInParameters) + " Directory not found or missing parameter.\r\n"; }
         }
 
+        internal static string TransferCompleteMessage
+        {
+            get { return ((int)Codes.TransferComplete) + " Transfer complete.\r\n"; }
+        }
+
         internal static string CurrentWorkingDirectoryMessage(string directory)
         {
             return ((int)Codes.WorkingDirectory) + " '" + directory + "' is current working directory.\r\n";
         }
 
-        //internal static string PasvCommandReplyMessage
-        //{
-        //    get
-        //    {
-        //        string[] serverIp = FtpServer.ServerIP.ToString().Split('.');
+        internal static string OpeningDataConnectionMessage(string type)
+        {
+            return ((int)Codes.DataConnection) + String.Format(" Opening {0} mode data connection.\r\n", type);
+        }
 
-        //        return String.Format(((int)Codes.PassiveMode) +
-        //                             " Entering Passive Mode ({0},{1},{2},{3},{4},{5}).\r\n", 127,//serverIp[0],
-        //                                                                                     0,//serverIp[1],
-        //                                                                                     0,//serverIp[2],
-        //                                                                                     1,//serverIp[3],
-        //                                                                                     14,
-        //                                                                                     178);
-        //    }
-        //}
         #endregion //Messages
 
         #region Commands

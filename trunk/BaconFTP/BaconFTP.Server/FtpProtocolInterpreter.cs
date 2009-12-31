@@ -243,7 +243,7 @@ namespace BaconFTP.Server
         {
             var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort);
 
-            new Thread(dtp.ListenForConnections).Start();
+            new Thread(dtp.SendDirectoryListing).Start(_currentWorkingDirectory);
         }
 
         #endregion //CommandHandling
