@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
 
 namespace BaconFTP.Server
 {
@@ -57,57 +53,57 @@ namespace BaconFTP.Server
 
         internal static string AnonymousUserAllowedMessage
         {
-            get { return ((int)Codes.UserOkay) + " Anonymous user allowed, please enter your e-mail as your password.\n"; }
+            get { return ((int)Codes.UserOkay) + " Anonymous user allowed, please enter your e-mail as your password.\r\n"; }
         }
 
         internal static string WelcomeMessage
         {
-            get { return ((int)Codes.Okay) + " Welcome to BaconFTP Server.\n"; }
+            get { return ((int)Codes.Okay) + " Welcome to BaconFTP Server.\r\n"; }
         }
 
         internal static string UserLoggedInMessage
         {
-            get { return ((int)Codes.UserLoggedIn) + " Logged in.\n"; }
+            get { return ((int)Codes.UserLoggedIn) + " Logged in.\r\n"; }
         }
 
         internal static string ServerClosingConnectionMessage
         {
-            get { return ((int)Codes.ServerClosingConnection) + " Closing connection..\n"; }
+            get { return ((int)Codes.ServerClosingConnection) + " Closing connection..\r\n"; }
         }
 
         internal static string UnknownCommandErrorMessage
         {
-            get { return ((int)Codes.Error) + " Command not recognized.\n"; }
+            get { return ((int)Codes.Error) + " Command not recognized.\r\n"; }
         }
 
         internal static string UserOkNeedPasswordMessage
         {
-            get { return ((int)Codes.UserOkay) + " User name okay, need password.\n"; }
+            get { return ((int)Codes.UserOkay) + " User name okay, need password.\r\n"; }
         }
 
         internal static string LoginFailedMessage
         {
-            get { return ((int)Codes.NotLoggedIn) + " Login authentication failed.\n"; }
+            get { return ((int)Codes.NotLoggedIn) + " Login authentication failed.\r\n"; }
         }
 
         internal static string SystemDescriptionMessage
         {
-            get { return ((int)Codes.SystemDescrption) + " " + Environment.OSVersion + "\n"; }
+            get { return ((int)Codes.SystemDescrption) + " " + "Windows_NT" + "\r\n"; }
         }
 
         internal static string ChangeWorkingDirectoryMessage 
         {
-            get { return ((int)Codes.CommandSuccessful).ToString() + "\n"; }
+            get { return ((int)Codes.CommandSuccessful).ToString() + "\r\n"; }
         }
 
         internal static string SyntaxErrorInParametersMessage 
         {
-            get { return ((int)Codes.SyntaxErrorInParameters) + " Directory not found or missing parameter.\n"; }
+            get { return ((int)Codes.SyntaxErrorInParameters) + " Directory not found or missing parameter.\r\n"; }
         }
 
         internal static string CurrentWorkingDirectoryMessage(string directory)
         {
-            return ((int)Codes.WorkingDirectory) + " '" + directory + "' is current working directory.\n";
+            return ((int)Codes.WorkingDirectory) + " '" + directory + "' is current working directory.\r\n";
         }
 
         internal static string PasvCommandReplyMessage
@@ -117,12 +113,12 @@ namespace BaconFTP.Server
                 string[] serverIp = FtpServer.ServerIP.ToString().Split('.');
 
                 return String.Format(((int)Codes.PassiveMode) +
-                                     " Entering Passive Mode. ({0},{1},{2},{3},{4},{5}).\n", serverIp[0],
-                                                                                             serverIp[1],
-                                                                                             serverIp[2],
-                                                                                             serverIp[3],
-                                                                                             20,
-                                                                                             30);
+                                     " Entering Passive Mode ({0},{1},{2},{3},{4},{5}).\r\n", 127,//serverIp[0],
+                                                                                             0,//serverIp[1],
+                                                                                             0,//serverIp[2],
+                                                                                             1,//serverIp[3],
+                                                                                             14,
+                                                                                             178);
             }
         }
         #endregion //Messages
@@ -178,6 +174,11 @@ namespace BaconFTP.Server
         #endregion
 
         #region FTP Service Commands
+
+        internal static string FeatCommand
+        {
+            get { return "FEAT"; }
+        }
 
         internal static string RetrCommand
         {

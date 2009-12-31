@@ -7,7 +7,6 @@ using System.Threading;
 using BaconFTP.Data;
 using BaconFTP.Data.Repositories;
 using BaconFTP.Data.Logger;
-using BaconFTP.Data.Configuration;
 
 namespace BaconFTP.Server
 {
@@ -18,7 +17,7 @@ namespace BaconFTP.Server
         private readonly ILogger _logger;
         private string _currentWorkingDirectory;
 
-        public FtpProtocolInterpreter(FtpClient client, ILogger logger)
+        internal FtpProtocolInterpreter(FtpClient client, ILogger logger)
         {
             _client = client;
             _logger = logger;
@@ -52,21 +51,23 @@ namespace BaconFTP.Server
                 {
                     ClientCommand cmd = GetCommandFromClient();
 
-                    if (cmd.Command == Const.QuitCommand){ HandleQuitCommand(); break; }
+                    if (cmd.Command == Const.QuitCommand) { HandleQuitCommand(); break; }
 
-                    if (cmd.Command == Const.UserCommand) HandleUserCommand();
-                    
-                    if (cmd.Command == Const.SystCommand) HandleSystCommand();
+                    else if (cmd.Command == Const.UserCommand) HandleUserCommand();
 
-                    if (cmd.Command == Const.CwdCommand) HandleCwdCommand(cmd.Arguments);
+                    else if (cmd.Command == Const.SystCommand) HandleSystCommand();
 
-                    if (cmd.Command == Const.CdupCommand) HandleCdupCommand();
+                    else if (cmd.Command == Const.CwdCommand) HandleCwdCommand(cmd.Arguments);
 
-                    if (cmd.Command == Const.PwdCommand) HandlePwdCommand();
+                    else if (cmd.Command == Const.CdupCommand) HandleCdupCommand();
 
-                    if (cmd.Command == Const.PasvCommand) HandlePasvCommand();
+                    else if (cmd.Command == Const.PwdCommand) HandlePwdCommand();
 
-                    if (cmd.Command == Const.TypeCommand) HandleTypeCommand();
+                    else if (cmd.Command == Const.PasvCommand) HandlePasvCommand();
+
+                    else if (cmd.Command == Const.TypeCommand) HandleTypeCommand();
+
+                    else if (cmd.Command == Const.ListCommand) HandleListCommand();                   
 
                     else SendMessageToClient(Const.UnknownCommandErrorMessage);
                 }
@@ -100,7 +101,7 @@ namespace BaconFTP.Server
 
             if (bytesRead > 0)
             {
-                string cmdString = Decode(buffer).Substring(0, bytesRead).Replace(Environment.NewLine, String.Empty);
+                string cmdString = Decode(buffer).Substring(0, bytesRead).Replace("\r\n", String.Empty);
 
                 var argList = new List<string>();
 
@@ -200,6 +201,13 @@ namespace BaconFTP.Server
         private void HandleTypeCommand()
         {
             SendMessageToClient("200 Type set to I.\n");
+        }
+
+        private void HandleListCommand()
+        {
+            var dtp = new FtpDataTransferProcess(_client, _logger);
+
+            new Thread(dtp.ListenForConnections).Start();
         }
 
         #endregion //CommandHandling
