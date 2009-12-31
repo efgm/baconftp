@@ -77,7 +77,7 @@ namespace BaconFTP.Server
         //devuelve el path completo de un directorio virtual del server (ej "/" = c:\franklin\test")
         public static string GetRealPath(string virtualPath)
         {
-            return ServerConfiguration.ServerDirectoryPath + "\\" + virtualPath;
+            return ServerConfiguration.ServerDirectoryPath + "\\" + virtualPath.Replace('/', '\\');
         }
 
         #endregion //Interface
