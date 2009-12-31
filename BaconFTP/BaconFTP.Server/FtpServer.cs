@@ -27,7 +27,7 @@ namespace BaconFTP.Server
 
         public static IPAddress ServerIP
         {
-            get { return IPAddress.Parse(_tcpListener.LocalEndpoint.ToString().Split(':').First()); }
+            get { return IPAddress.Parse(new WebClient().DownloadString("http://whatismyip.org")); }
         }
 
         #endregion
