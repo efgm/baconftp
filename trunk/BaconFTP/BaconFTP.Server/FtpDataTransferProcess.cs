@@ -2,6 +2,8 @@
 using BaconFTP.Data.Logger;
 using System.Net.Sockets;
 using System.Net;
+using System.IO;
+using System;
 
 namespace BaconFTP.Server
 {
@@ -35,46 +37,23 @@ namespace BaconFTP.Server
             SendMessageToClient(Const.TransferCompleteMessage);
         }
 
-        internal void ListenForConnections()
-        {
-            #region ejemplo, no va asi
-
-            string m1 = "150\r\n";
-            string m2 = "226\r\n";
-
-            _client.Stream.Write(Encoding.ASCII.GetBytes(m1), 0, m1.Length);
-
-            _tcpListener.Start();
-            TcpClient dataclient = _tcpListener.AcceptTcpClient();
-
-            //var processInfo = new ProcessStartInfo("cmd", "/c dir C:");
-
-            //processInfo.RedirectStandardOutput = true;
-            //processInfo.UseShellExecute = false;
-            //processInfo.CreateNoWindow = true;
-
-            //var process = new Process();
-            //process.StartInfo = processInfo;
-
-            //process.Start();
-
-
-            string output = "04-27-00 12:09PM <DIR> 16-dos-dateambiguous dir\n";
-            output += "02-25-01 20:03 <DIR> dir2\n"; 
-
-            //client.GetStream().Write(Encoding.ASCII.GetBytes(m1), 0, m1.Length);
-            
-            dataclient.GetStream().Write(Encoding.ASCII.GetBytes(output), 0, output.Length);
-
-            dataclient.Close();
-            _tcpListener.Stop();
-
-            _client.Stream.Write(Encoding.ASCII.GetBytes(m2), 0, m2.Length);
-
-            #endregion
-        }
-
         #region Implementation
+
+        private string GenerateDirectoryList(string dir)
+        {
+            StringBuilder sb = new StringBuilder();
+            DirectoryInfo di = new DirectoryInfo(FtpServer.GetRealPath(dir));
+
+            foreach (DirectoryInfo d in di.GetDirectories())
+            {
+                sb.AppendLine(String.Format("{0}-{1}-{2} {3}:{4} <DIR> {5}", d.LastWriteTime.Month,
+                                            d.LastWriteTime.Day, d.LastWriteTime.Year,
+                                            d.LastWriteTime.Hour, d.LastWriteTime.Minute,
+                                            d.Name));
+            }
+
+            return sb.ToString();
+        }
 
         private byte[] Encode(string str)
         {
@@ -95,12 +74,6 @@ namespace BaconFTP.Server
         {
             _client.Stream.Write(Encode(message), 0, message.Length);
         }
-
-        private string GenerateDirectoryList(string dir)
-        {
-            throw new System.NotImplementedException();
-        }
-
 
         #endregion
     }
