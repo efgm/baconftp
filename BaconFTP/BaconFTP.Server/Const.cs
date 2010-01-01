@@ -110,7 +110,7 @@ namespace BaconFTP.Server
 
         internal static string CurrentWorkingDirectoryMessage(string directory)
         {
-            return ((int)Codes.WorkingDirectory) + " '" + directory + "' is current working directory.\r\n";
+            return ((int)Codes.WorkingDirectory) + " " + directory + " is current working directory.\r\n";
         }
 
         internal static string OpeningDataConnectionMessage(string type)

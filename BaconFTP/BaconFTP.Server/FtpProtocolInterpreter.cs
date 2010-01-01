@@ -188,7 +188,6 @@ namespace BaconFTP.Server
         private void HandleCwdCommand(IList<string> args) 
         {
             string directory = args.First();
-            //var test = FtpServer.GetRealPath(directory);
 
             if (Directory.Exists(FtpServer.GetRealPath(directory)))
             {
