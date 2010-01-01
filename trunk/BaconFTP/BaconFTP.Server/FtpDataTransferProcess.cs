@@ -44,10 +44,16 @@ namespace BaconFTP.Server
             StringBuilder sb = new StringBuilder();
             DirectoryInfo di = new DirectoryInfo(FtpServer.GetRealPath(dir));
 
+            DirectoryInfo[] directoriesList;
+            FileInfo[] filesList;
 
-            var directoriesList = di.GetDirectories();
-            var filesList = di.GetFiles();
-
+            try
+            {
+                directoriesList = di.GetDirectories();
+                filesList = di.GetFiles();
+            }
+            catch { return string.Empty; }
+            
             if (directoriesList.Length > 0)
             {
                 foreach (DirectoryInfo d in directoriesList)
