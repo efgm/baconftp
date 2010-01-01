@@ -188,10 +188,12 @@ namespace BaconFTP.Server
         private void HandleCwdCommand(IList<string> args) 
         {
             string directory = args.First();
+            //var test = FtpServer.GetRealPath(directory);
 
             if (Directory.Exists(FtpServer.GetRealPath(directory)))
             {
                 _currentWorkingDirectory += directory;
+                _currentWorkingDirectory = _currentWorkingDirectory.Replace("//", "/");
                 SendMessageToClient(Const.ChangeWorkingDirectoryMessage + _currentWorkingDirectory);
 
                 _logger.Write("Current Working Directory changed to: " + directory);
