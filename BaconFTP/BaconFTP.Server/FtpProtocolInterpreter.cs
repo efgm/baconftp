@@ -190,13 +190,6 @@ namespace BaconFTP.Server
             if (Directory.Exists(FtpServer.GetRealPath(directory)))
             {
                 _currentWorkingDirectory = directory;
-                //if (IsRootDirectory(directory))
-                //    _currentWorkingDirectory = directory;
-                //else
-                //{
-                //    _currentWorkingDirectory += directory;
-                //    _currentWorkingDirectory = _currentWorkingDirectory.Replace("//", "/");
-                //}
 
                 SendMessageToClient(Const.ChangeWorkingDirectoryMessage);
             }
@@ -206,17 +199,14 @@ namespace BaconFTP.Server
 
         private void HandleCdupCommand() 
         {
-            //string actualDirectoryName = (new DirectoryInfo(FtpServer.GetRealPath(_currentWorkingDirectory))).Name;
-
             string newWorkingDir = _currentWorkingDirectory.Replace(
                                         (new DirectoryInfo(FtpServer.GetRealPath(_currentWorkingDirectory))).Name,
                                         string.Empty);
 
-            if (IsRootDirectory(newWorkingDir))
-                HandleCwdCommand(newWorkingDir);
-            else
-                HandleCwdCommand(newWorkingDir.Substring(newWorkingDir.Length - 1));
-                
+            _currentWorkingDirectory = IsRootDirectory(newWorkingDir) ? 
+                                       newWorkingDir : newWorkingDir.Substring(0, newWorkingDir.Length - 1);
+
+            SendMessageToClient(Const.ChangeToParentDirectoryMessage);    
         }
 
         private void HandlePwdCommand()
