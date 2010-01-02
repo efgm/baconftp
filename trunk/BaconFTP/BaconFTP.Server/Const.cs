@@ -45,7 +45,7 @@ namespace BaconFTP.Server
 
         internal static string ServerVersion
         {
-            get { return "0.1"; }
+            get { return "0.9beta"; }
         }
 
         public static string FatalErrorFormatString
