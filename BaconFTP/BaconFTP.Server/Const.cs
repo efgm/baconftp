@@ -138,9 +138,19 @@ namespace BaconFTP.Server
             get { return ((int)Codes.CantPerformOperation) + " Can't delete file.\r\n"; }
         }
 
+        internal static string CannotDeleteDirectoryMessage
+        {
+            get { return ((int)Codes.CantPerformOperation) + " Can't delete directory.\r\n"; }
+        }
+
         internal static string NoPermissionToDeleteFileMessage
         {
             get { return ((int)Codes.CantPerformOperation) + " No permission to delete file.\r\n"; }
+        }
+
+        internal static string NoPermissionToDeleteDirectoryMessage
+        {
+            get { return ((int)Codes.CantPerformOperation) + " No permission to delete directory.\r\n"; }
         }
 
         internal static string CurrentWorkingDirectoryMessage(string directory)
@@ -184,6 +194,11 @@ namespace BaconFTP.Server
         internal static string CannotOpenDataConnectionMessage
         {
             get { return ((int)Codes.CannotOpenDataConnection) + " Cannot open the data connection.\r\n"; }
+        }
+
+        internal static string DirectoryRemovedMessage
+        {
+            get { return ((int)Codes.CommandSuccessful) + " Directory removed.\r\n"; }
         }
 
         #endregion //Messages
