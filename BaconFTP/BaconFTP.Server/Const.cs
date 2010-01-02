@@ -23,6 +23,9 @@ namespace BaconFTP.Server
         
         
         UserOkay = 331,
+
+        CantPerformOperation = 450,
+
         NoUserAuthenticated = 530,
 
         Error = 500,
@@ -101,17 +104,22 @@ namespace BaconFTP.Server
 
         internal static string ChangeWorkingDirectoryMessage 
         {
-            get { return ((int)Codes.CommandSuccessful).ToString() + " CWD command successful.\r\n"; }
+            get { return ((int)Codes.CommandSuccessful) + " CWD command successful.\r\n"; }
         }
 
         internal static string ChangeToParentDirectoryMessage
         {
-            get { return ((int)Codes.CommandSuccessful).ToString() + " CDUP command successful.\r\n"; }
+            get { return ((int)Codes.CommandSuccessful) + " CDUP command successful.\r\n"; }
+        }
+
+        internal static string CommandOkayMessage
+        {
+            get { return ((int)Codes.CommandSuccessful) + " Command okay.\r\n"; }
         }
 
         internal static string SyntaxErrorInParametersMessage 
         {
-            get { return ((int)Codes.SyntaxErrorInParameters) + " Directory not found or missing parameter.\r\n"; }
+            get { return ((int)Codes.SyntaxErrorInParameters) + " Directory/file not found or missing parameter.\r\n"; }
         }
 
         internal static string TransferCompleteMessage
@@ -119,9 +127,27 @@ namespace BaconFTP.Server
             get { return ((int)Codes.TransferComplete) + " Transfer complete.\r\n"; }
         }
 
+        internal static string FileOperationOkayMessage
+        {
+            get { return ((int)Codes.CommandSuccessful) + " Requested file action okay, completed.\r\n"; }
+        }
+
+        internal static string CannotDeleteFileMessage
+        {
+            get { return ((int)Codes.CantPerformOperation) + " Can't delete file.\r\n"; }
+        }
+
+        internal static string NoPermissionToDeleteFileMessage
+        {
+            get { return ((int)Codes.CantPerformOperation) + " No permission to delete file.\r\n"; }
+        }
+
         internal static string CurrentWorkingDirectoryMessage(string directory)
         {
-            return ((int)Codes.WorkingDirectory) + " " + directory + " is current working directory.\r\n";
+            //si el directorio tiene espacios, devuelvelo entre " ".
+            return (directory.Split(' ').Length > 1) ?
+                ((int)Codes.WorkingDirectory) + " \"" + directory + "\" is current working directory.\r\n" :
+                ((int)Codes.WorkingDirectory) + " " + directory + " is current working directory.\r\n";
         }
 
         internal static string OpeningDataConnectionMessage(string type)
@@ -132,6 +158,21 @@ namespace BaconFTP.Server
         internal static string TransferTypeSetToMessage(string type)
         {
             return ((int)Codes.CommandSuccessful) + " Type set to " + type + ".\r\n";
+        }
+
+        internal static string DirectoryAlreadyExistsMessage
+        {
+            get { return ((int)Codes.FileNotFoundOrNoAccess) + " Directory already exists.\r\n"; }
+        }
+
+        internal static string DirectoryCreatedMessage
+        {
+            get { return ((int)Codes.CommandSuccessful) + " Directory created.\r\n"; }
+        }
+
+        internal static string CannotCreateDirectoryMessage
+        {
+            get { return ((int)Codes.FileNotFoundOrNoAccess) + " Cannot create directory.\r\n."; }
         }
 
         #endregion //Messages
@@ -148,11 +189,6 @@ namespace BaconFTP.Server
         internal static string PassCommand
         {
             get { return "PASS"; }
-        }
-
-        internal static string AcctCommand
-        {
-            get { return "ACCT"; }
         }
 
         internal static string CwdCommand
@@ -172,25 +208,11 @@ namespace BaconFTP.Server
 
         #endregion
 
-        #region Transfer Parameters Commands
-
-        internal static string PortCommand
-        {
-            get { return "PORT"; }
-        }
+        #region FTP Service Commands
 
         internal static string PasvCommand
         {
             get { return "PASV"; }
-        }
-
-        #endregion
-
-        #region FTP Service Commands
-
-        internal static string FeatCommand
-        {
-            get { return "FEAT"; }
         }
 
         internal static string RetrCommand
@@ -201,26 +223,6 @@ namespace BaconFTP.Server
         internal static string StorCommand
         {
             get { return "STOR"; }
-        }
-
-        internal static string StouCommand
-        {
-            get { return "STOU";}
-        }
-
-        internal static string AppeCommand
-        {
-            get { return "APPE"; }
-        }
-
-        internal static string RnfrCommand
-        {
-            get { return "RNFR"; }
-        }
-
-        internal static string RntoCommand 
-        {
-            get { return "RNTO"; }
         }
 
         internal static string DeleCommand 
@@ -246,11 +248,6 @@ namespace BaconFTP.Server
         internal static string ListCommand
         {
             get { return "LIST"; }
-        }
-
-        internal static string NlistCommand 
-        {
-            get { return "NLST"; }
         }
 
         internal static string SystCommand
