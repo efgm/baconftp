@@ -19,6 +19,7 @@ namespace BaconFTP.Server
         private readonly ILogger _logger;
         private string _currentWorkingDirectory;
         private int _dataPort;
+        private string _transferType;
 
         internal FtpProtocolInterpreter(FtpClient client, ILogger logger)
         {
@@ -68,9 +69,11 @@ namespace BaconFTP.Server
 
                     else if (cmd.Command == Const.PasvCommand) HandlePasvCommand();
 
-                    else if (cmd.Command == Const.TypeCommand) HandleTypeCommand();
+                    else if (cmd.Command == Const.TypeCommand) HandleTypeCommand(cmd.Arguments.First());
 
-                    else if (cmd.Command == Const.ListCommand) HandleListCommand();                   
+                    else if (cmd.Command == Const.ListCommand) HandleListCommand();
+
+                    else if (cmd.Command == Const.RetrCommand) HandleRetrCommand(cmd.Arguments.First());
 
                     else SendMessageToClient(Const.UnknownCommandErrorMessage);
                 }
@@ -237,17 +240,21 @@ namespace BaconFTP.Server
             SendMessageToClient(pasvReply);
         }
 
-        private void HandleTypeCommand()
+        private void HandleTypeCommand(string type)
         {
-            //temporal
-            SendMessageToClient("200 Type set to I.\n");
+            _transferType = type;
+            SendMessageToClient(Const.TransferTypeSetToMessage(type));
         }
 
         private void HandleListCommand()
         {
-            var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort);
+            var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort, _transferType);
 
             new Thread(dtp.SendDirectoryListing).Start(_currentWorkingDirectory);
+        }
+
+        private void HandleRetrCommand(string file)
+        {
         }
 
         private bool IsRootDirectory(string directory)

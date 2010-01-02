@@ -123,6 +123,11 @@ namespace BaconFTP.Server
             return ((int)Codes.DataConnection) + String.Format(" Opening {0} mode data connection.\r\n", type);
         }
 
+        internal static string TransferTypeSetToMessage(string type)
+        {
+            return ((int)Codes.CommandSuccessful) + " Type set to " + type + ".\r\n";
+        }
+
         #endregion //Messages
 
         #region Commands
