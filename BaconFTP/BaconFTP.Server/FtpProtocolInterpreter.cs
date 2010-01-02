@@ -60,7 +60,7 @@ namespace BaconFTP.Server
 
                     else if (cmd.Command == Const.SystCommand) HandleSystCommand();
 
-                    else if (cmd.Command == Const.CwdCommand) HandleCwdCommand(cmd.Arguments);
+                    else if (cmd.Command == Const.CwdCommand) HandleCwdCommand(cmd.Arguments.First());
 
                     else if (cmd.Command == Const.CdupCommand) HandleCdupCommand();
 
@@ -185,17 +185,13 @@ namespace BaconFTP.Server
             SendMessageToClient(Const.SystemDescriptionMessage);
         }
 
-        private void HandleCwdCommand(IList<string> args) 
+        private void HandleCwdCommand(string directory) 
         {
-            string directory = args.First();
-
             if (Directory.Exists(FtpServer.GetRealPath(directory)))
             {
                 _currentWorkingDirectory += directory;
                 _currentWorkingDirectory = _currentWorkingDirectory.Replace("//", "/");
                 SendMessageToClient(Const.ChangeWorkingDirectoryMessage + _currentWorkingDirectory);
-
-                _logger.Write("Current Working Directory changed to: " + directory);
             }
             else
             {
@@ -205,10 +201,17 @@ namespace BaconFTP.Server
 
         private void HandleCdupCommand() 
         {
-            _currentWorkingDirectory = "/";  //new DirectoryInfo(Const._currentWorkingDirectory).Parent.Name;
-            SendMessageToClient(Const.ChangeWorkingDirectoryMessage + _currentWorkingDirectory);
-            
-            _logger.Write("Current Working Directory changed to Parent Directory: " + _currentWorkingDirectory);
+            //string actualDirectoryName = (new DirectoryInfo(FtpServer.GetRealPath(_currentWorkingDirectory))).Name;
+
+            string newWorkingDir = _currentWorkingDirectory.Replace(
+                                        (new DirectoryInfo(FtpServer.GetRealPath(_currentWorkingDirectory))).Name,
+                                        string.Empty);
+
+            if (newWorkingDir.Length == 1)
+                HandleCwdCommand(newWorkingDir);
+            else
+                HandleCwdCommand(newWorkingDir.Substring(newWorkingDir.Length - 1));
+                
         }
 
         private void HandlePwdCommand()
