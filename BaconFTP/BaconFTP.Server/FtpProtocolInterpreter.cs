@@ -189,20 +189,19 @@ namespace BaconFTP.Server
         {
             if (Directory.Exists(FtpServer.GetRealPath(directory)))
             {
-                if (IsRootDirectory(directory))
-                    _currentWorkingDirectory = directory;
-                else
-                {
-                    _currentWorkingDirectory += directory;
-                    _currentWorkingDirectory = _currentWorkingDirectory.Replace("//", "/");
-                }
+                _currentWorkingDirectory = directory;
+                //if (IsRootDirectory(directory))
+                //    _currentWorkingDirectory = directory;
+                //else
+                //{
+                //    _currentWorkingDirectory += directory;
+                //    _currentWorkingDirectory = _currentWorkingDirectory.Replace("//", "/");
+                //}
 
-                SendMessageToClient(Const.ChangeWorkingDirectoryMessage + _currentWorkingDirectory);
+                SendMessageToClient(Const.ChangeWorkingDirectoryMessage);
             }
             else
-            {
                 SendMessageToClient(Const.SyntaxErrorInParametersMessage);
-            }
         }
 
         private void HandleCdupCommand() 

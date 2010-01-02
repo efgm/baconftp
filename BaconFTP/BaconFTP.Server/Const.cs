@@ -95,7 +95,12 @@ namespace BaconFTP.Server
 
         internal static string ChangeWorkingDirectoryMessage 
         {
-            get { return ((int)Codes.CommandSuccessful).ToString() + "\r\n"; }
+            get { return ((int)Codes.CommandSuccessful).ToString() + " CWD command successful.\r\n"; }
+        }
+
+        internal static string ChangeToParentDirectoryMessage
+        {
+            get { return ((int)Codes.CommandSuccessful).ToString() + " CDUP command successful.\r\n"; }
         }
 
         internal static string SyntaxErrorInParametersMessage 
