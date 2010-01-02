@@ -21,6 +21,7 @@ namespace BaconFTP.Data.Configuration
         internal static string FileLoggingMethod = "file";
     }
 
+    //clase que maneja la configuracion del server en un archivo xml
     public static class ServerConfiguration
     {
         #region Fields
@@ -33,6 +34,7 @@ namespace BaconFTP.Data.Configuration
 
         #region Interface
 
+        //parsea el archivo de configuracion para ver si es válido.
         public static void Parse()
         {
             try
