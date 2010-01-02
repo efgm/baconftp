@@ -118,12 +118,16 @@ namespace BaconFTP.Server
         {
             using (FileStream fs = new FileInfo(file).OpenRead())
             {
-                byte[] buffer = new byte[2048];
+                byte[] buffer = new byte[Const.BlockSize];
                 int bytesRead;
                 Stream clientStream = dataClient.GetStream();
 
-                while ((bytesRead = fs.Read(buffer, 0, buffer.Length)) != 0)
-                    clientStream.Write(buffer, 0, bytesRead);
+                try
+                {
+                    while ((bytesRead = fs.Read(buffer, 0, buffer.Length)) != 0)
+                        clientStream.Write(buffer, 0, bytesRead);
+                }
+                catch { return; }
             }
         }
 
