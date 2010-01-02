@@ -29,44 +29,22 @@ namespace BaconFTP.Server
 
         internal void SendDirectoryListing(object dir)
         {
-            SendMessageToClient(Const.OpeningDataConnectionMessage(_transferType));
-
-            _tcpListener.Start();
-
-            using (TcpClient dataClient = _tcpListener.AcceptTcpClient())
-            {
-                _logger.Write("Opening data connection with {0} on port {1}.", dataClient.Client.RemoteEndPoint, _dataPort);
-                _logger.Write("Sending directory listing to {0}.", dataClient.Client.RemoteEndPoint);
-
-                SendDataToClient(dataClient, GenerateDirectoryList(dir as string));
-
-                _logger.Write("Closing data connection with {0}.", dataClient.Client.RemoteEndPoint);
-            }
-
-            _tcpListener.Stop();
-            SendMessageToClient(Const.TransferCompleteMessage);
+            OpenDataConnection("LIST", dir);
         }
 
         internal void SendFileToClient(object file)
         {
-            SendMessageToClient(Const.OpeningDataConnectionMessage(_transferType));
-
-            _tcpListener.Start();
-
-            using (TcpClient dataClient = _tcpListener.AcceptTcpClient())
-            {
-                _logger.Write("Opening data connection with {0} on port {1}.", dataClient.Client.RemoteEndPoint, _dataPort);
-
-                SendFileToClient(dataClient, file as string);
-
-                _logger.Write("Closing data connection with {0}.", dataClient.Client.RemoteEndPoint);
-            }
-
-            _tcpListener.Stop();
-            SendMessageToClient(Const.TransferCompleteMessage);
+            OpenDataConnection("RETR", file);
         }
 
         internal void GetFileFromClient(object file)
+        {
+            OpenDataConnection("STOR", file);
+        }
+
+        #region Implementation
+
+        private void OpenDataConnection(string type, object file)
         {
             SendMessageToClient(Const.OpeningDataConnectionMessage(_transferType));
 
@@ -76,7 +54,15 @@ namespace BaconFTP.Server
             {
                 _logger.Write("Opening data connection with {0} on port {1}.", dataClient.Client.RemoteEndPoint, _dataPort);
 
-                GetFileFromClient(dataClient, file as string);
+                if (type == "STOR")                
+                    GetFileFromClient(dataClient, file as string);
+                else if (type == "RETR")
+                    SendFileToClient(dataClient, file as string);
+                else if (type == "LIST")
+                {
+                    _logger.Write("Sending directory listing to {0}.", dataClient.Client.RemoteEndPoint);
+                    SendDataToClient(dataClient, GenerateDirectoryList(file as string));
+                }
 
                 _logger.Write("Closing data connection with {0}.", dataClient.Client.RemoteEndPoint);
             }
@@ -84,8 +70,6 @@ namespace BaconFTP.Server
             _tcpListener.Stop();
             SendMessageToClient(Const.TransferCompleteMessage);
         }
-
-        #region Implementation
 
         private string GenerateDirectoryList(string dir)
         {
