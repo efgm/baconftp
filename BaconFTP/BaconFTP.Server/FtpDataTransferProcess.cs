@@ -13,28 +13,32 @@ namespace BaconFTP.Server
         private readonly ILogger _logger;
         private readonly TcpListener _tcpListener;
         private readonly int _dataPort;
+        private readonly string _transferType;
 
-        internal FtpDataTransferProcess(FtpClient client, ILogger logger, int dataPort)
+        internal FtpDataTransferProcess(FtpClient client, ILogger logger, int dataPort, string transferType)
         {
             _client = client;
             _logger = logger;
             _dataPort = dataPort;
             _tcpListener = new TcpListener(IPAddress.Any, dataPort);
+            _transferType = transferType == "I" ? "BINARY" : "ASCII";
         }
 
         internal void SendDirectoryListing(object dir)
         {
-            SendMessageToClient(Const.OpeningDataConnectionMessage("BINARY"));
+            SendMessageToClient(Const.OpeningDataConnectionMessage(_transferType));
 
             _tcpListener.Start();
-            TcpClient dataClient = _tcpListener.AcceptTcpClient();
 
-            _logger.Write("Opening data connection with {0} on port {1}.", dataClient.Client.RemoteEndPoint, _dataPort);
+            using (TcpClient dataClient = _tcpListener.AcceptTcpClient())
+            {
+                _logger.Write("Opening data connection with {0} on port {1}.", dataClient.Client.RemoteEndPoint, _dataPort);
 
-            SendDataToClient(dataClient, GenerateDirectoryList(dir as string));
+                SendDataToClient(dataClient, GenerateDirectoryList(dir as string));
 
-            _logger.Write("Closing data connection with {0}.", dataClient.Client.RemoteEndPoint);
-            dataClient.Close();
+                _logger.Write("Closing data connection with {0}.", dataClient.Client.RemoteEndPoint);
+            }
+
             _tcpListener.Stop();
 
             SendMessageToClient(Const.TransferCompleteMessage);
