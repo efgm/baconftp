@@ -50,23 +50,33 @@ namespace BaconFTP.Server
 
             _tcpListener.Start();
 
-            using (TcpClient dataClient = _tcpListener.AcceptTcpClient())
+            try
             {
-                _logger.Write("Opening data connection with {0} on port {1}.", dataClient.Client.RemoteEndPoint, _dataPort);
-
-                if (type == "STOR")                
-                    GetFileFromClient(dataClient, file as string);
-                else if (type == "RETR")
-                    SendFileToClient(dataClient, file as string);
-                else if (type == "LIST")
+                using (TcpClient dataClient = _tcpListener.AcceptTcpClient())
                 {
-                    _logger.Write("Sending directory listing to {0}.", dataClient.Client.RemoteEndPoint);
-                    SendDataToClient(dataClient, GenerateDirectoryList(file as string));
+                    _logger.Write("Opening data connection with {0} on port {1}.", dataClient.Client.RemoteEndPoint, _dataPort);
+
+                    if (type == "STOR")
+                        GetFileFromClient(dataClient, file as string);
+                    else if (type == "RETR")
+                        SendFileToClient(dataClient, file as string);
+                    else if (type == "LIST")
+                    {
+                        _logger.Write("Sending directory listing to {0}.", dataClient.Client.RemoteEndPoint);
+                        SendDataToClient(dataClient, GenerateDirectoryList(file as string));
+                    }
+
+                    _logger.Write("Closing data connection with {0}.", dataClient.Client.RemoteEndPoint);
                 }
-
-                _logger.Write("Closing data connection with {0}.", dataClient.Client.RemoteEndPoint);
             }
+            catch (SocketException)
+            {
+                _tcpListener.Stop();
+                SendMessageToClient(Const.CannotOpenDataConnectionMessage);
 
+                return;
+            }
+            
             _tcpListener.Stop();
             SendMessageToClient(Const.TransferCompleteMessage);
         }
@@ -140,6 +150,7 @@ namespace BaconFTP.Server
                 catch (Exception e)
                 {
                     _logger.Write("Error: {0}.", e.Message);
+                    SendMessageToClient(Const.DataConnectionErrorMessage);
                     return; 
                 }
 
@@ -166,6 +177,7 @@ namespace BaconFTP.Server
                 catch (Exception e)
                 {
                     _logger.Write("Error: {0}.", e.Message);
+                    SendMessageToClient(Const.DataConnectionErrorMessage);
                     return;
                 }
 
