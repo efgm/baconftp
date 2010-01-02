@@ -40,16 +40,33 @@ namespace BaconFTP.Server
             }
 
             _tcpListener.Stop();
-
             SendMessageToClient(Const.TransferCompleteMessage);
         }
 
+        internal void SendFileToClient(object file)
+        {
+            SendMessageToClient(Const.OpeningDataConnectionMessage(_transferType));
+
+            _tcpListener.Start();
+
+            using (TcpClient dataClient = _tcpListener.AcceptTcpClient())
+            {
+                _logger.Write("Opening data connection with {0} on port {1}.", dataClient.Client.RemoteEndPoint, _dataPort);
+
+                SendFileToClient(dataClient, file as string);
+
+                _logger.Write("Closing data connection with {0}.", dataClient.Client.RemoteEndPoint);
+            }
+
+            _tcpListener.Stop();
+            SendMessageToClient(Const.TransferCompleteMessage);
+        }
         #region Implementation
 
         private string GenerateDirectoryList(string dir)
         {
             StringBuilder sb = new StringBuilder();
-            DirectoryInfo di = new DirectoryInfo(FtpServer.GetRealPath(dir));
+            DirectoryInfo di = new DirectoryInfo(FtpServer.GetDirectoryRealPath(dir));
 
             DirectoryInfo[] directoriesList;
             FileInfo[] filesList;
@@ -95,6 +112,23 @@ namespace BaconFTP.Server
         private void SendDataToClient(TcpClient dataClient, string data)
         {
             dataClient.GetStream().Write(Encode(data), 0, data.Length);
+        }
+
+        private void SendFileToClient(TcpClient dataClient, string file)
+        {
+            using (FileStream fs = new FileInfo(file).OpenRead())
+            {
+                byte[] buffer = new byte[2048];
+                int bytesRead;
+                Stream clientStream = dataClient.GetStream();
+
+                bytesRead = fs.Read(buffer, 0, buffer.Length);
+                while (bytesRead != 0)
+                {
+                    clientStream.Write(buffer, 0, bytesRead);
+                    bytesRead = fs.Read(buffer, 0, buffer.Length);
+                }
+            }
         }
 
         private void SendMessageToClient(string message)
