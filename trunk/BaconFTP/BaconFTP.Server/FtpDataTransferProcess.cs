@@ -29,6 +29,8 @@ namespace BaconFTP.Server
             _tcpListener.Start();
             TcpClient dataClient = _tcpListener.AcceptTcpClient();
 
+            _logger.Write("Opening data connection with {0} on port {1}.", dataClient.Client, _dataPort);
+
             SendDataToClient(dataClient, GenerateDirectoryList(dir as string));
 
             dataClient.Close();
