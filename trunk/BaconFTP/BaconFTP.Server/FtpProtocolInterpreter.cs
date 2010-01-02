@@ -9,6 +9,7 @@ using BaconFTP.Data.Repositories;
 using BaconFTP.Data.Logger;
 using System.Net.Sockets;
 using System.Net;
+using System.Security;
 
 namespace BaconFTP.Server
 {
@@ -55,27 +56,35 @@ namespace BaconFTP.Server
                 {
                     ClientCommand cmd = GetCommandFromClient();
 
-                    if (cmd.Command == Const.QuitCommand) { HandleQuitCommand(); break; }
+                    if (AreEqual(cmd.Command, Const.QuitCommand)) { HandleQuitCommand(); break; }
 
-                    else if (cmd.Command == Const.UserCommand) HandleUserCommand();
+                    else if (AreEqual(cmd.Command, Const.UserCommand)) HandleUserCommand();
 
-                    else if (cmd.Command == Const.SystCommand) HandleSystCommand();
+                    else if (AreEqual(cmd.Command, Const.SystCommand)) HandleSystCommand();
 
-                    else if (cmd.Command == Const.CwdCommand) HandleCwdCommand(cmd.Arguments.First());
+                    else if (AreEqual(cmd.Command, Const.CwdCommand)) HandleCwdCommand(cmd.Arguments);
 
-                    else if (cmd.Command == Const.CdupCommand) HandleCdupCommand();
+                    else if (AreEqual(cmd.Command, Const.CdupCommand)) HandleCdupCommand();
 
-                    else if (cmd.Command == Const.PwdCommand) HandlePwdCommand();
+                    else if (AreEqual(cmd.Command, Const.PwdCommand)) HandlePwdCommand();
 
-                    else if (cmd.Command == Const.PasvCommand) HandlePasvCommand();
+                    else if (AreEqual(cmd.Command, Const.PasvCommand)) HandlePasvCommand();
 
-                    else if (cmd.Command == Const.TypeCommand) HandleTypeCommand(cmd.Arguments.First());
+                    else if (AreEqual(cmd.Command, Const.TypeCommand)) HandleTypeCommand(cmd.Arguments.First());
 
-                    else if (cmd.Command == Const.ListCommand) HandleListCommand();
+                    else if (AreEqual(cmd.Command, Const.ListCommand)) HandleListCommand();
 
-                    else if (cmd.Command == Const.RetrCommand) HandleRetrCommand(cmd.Arguments);
+                    else if (AreEqual(cmd.Command, Const.RetrCommand)) HandleRetrCommand(cmd.Arguments);
 
-                    else if (cmd.Command == Const.StorCommand) HandleStorCommand(cmd.Arguments);
+                    else if (AreEqual(cmd.Command, Const.StorCommand)) HandleStorCommand(cmd.Arguments);
+
+                    else if (AreEqual(cmd.Command, Const.DeleCommand)) HandleDeleCommand(cmd.Arguments);
+
+                    else if (AreEqual(cmd.Command, Const.MkdCommand)) HandleMkdCommand(cmd.Arguments);
+
+                    else if (AreEqual(cmd.Command, Const.RmdCommand)) HandleRmdCommand(cmd.Arguments);
+
+                    else if (AreEqual(cmd.Command, Const.NoopCommand)) HandleNoopCommand();
 
                     else SendMessageToClient(Const.UnknownCommandErrorMessage);
                 }
@@ -86,6 +95,12 @@ namespace BaconFTP.Server
         #endregion
 
         #region Implementation
+
+        //compara 2 strings ignorando mayúsculas y minúsculas
+        private bool AreEqual(string s1, string s2)
+        {
+            return string.Equals(s1, s2, StringComparison.CurrentCultureIgnoreCase);
+        }
 
         private void SendMessageToClient(string message)
         {
@@ -190,8 +205,10 @@ namespace BaconFTP.Server
             SendMessageToClient(Const.SystemDescriptionMessage);
         }
 
-        private void HandleCwdCommand(string directory) 
+        private void HandleCwdCommand(IList<string> args) 
         {
+            string directory = JoinArguments(args);
+
             if (!directory.Contains("/"))
                 directory = _currentWorkingDirectory + "/" + directory;
 
@@ -257,13 +274,8 @@ namespace BaconFTP.Server
         }
 
         private void HandleRetrCommand(IList<string> args)
-        {            
-            string file = args.First();
-
-            //si el archivo tiene espacios, juntar todo en una variable.
-            if (args.Count() > 1)
-                foreach (string a in args.Skip(1))
-                    file += " " + a;
+        {
+            string file = JoinArguments(args);
 
             var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort, 
                                                  _transferType, _currentWorkingDirectory);
@@ -277,18 +289,84 @@ namespace BaconFTP.Server
 
         private void HandleStorCommand(IList<string> args)
         {
-            string file = args.First();
-
-            //si el archivo tiene espacios, juntar todo en una variable.
-            if (args.Count() > 1)
-                foreach (string a in args.Skip(1))
-                    file += " " + a;
+            string file = JoinArguments(args);
 
             var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort,
                                                  _transferType, _currentWorkingDirectory);
 
             new Thread(dtp.GetFileFromClient).Start(file);
 
+        }
+
+        private void HandleDeleCommand(IList<string> args)
+        {
+            string file = JoinArguments(args);
+            string path = FtpServer.GetRealPath(_currentWorkingDirectory + "/" + file);
+
+            if (File.Exists(path))
+            {
+                try
+                {
+                    new FileInfo(path).Delete();
+                    SendMessageToClient(Const.FileOperationOkayMessage);
+                }
+                catch (IOException)
+                {
+                    SendMessageToClient(Const.CannotDeleteFileMessage);
+                }
+                catch (SecurityException)
+                {
+                    SendMessageToClient(Const.NoPermissionToDeleteFileMessage);
+                }
+            }
+            else
+                SendMessageToClient(Const.SyntaxErrorInParametersMessage);
+            
+        }
+
+        private void HandleMkdCommand(IList<string> args)
+        {
+            string directory = JoinArguments(args);
+            string path = FtpServer.GetRealPath(_currentWorkingDirectory + "/" + directory);
+
+            if (!Directory.Exists(path))
+            {
+                try
+                {
+                    new DirectoryInfo(path).Create();
+                    SendMessageToClient(Const.DirectoryCreatedMessage);
+                }
+                catch (IOException)
+                {
+                    SendMessageToClient(Const.CannotCreateDirectoryMessage);
+                }
+            }
+            else
+                SendMessageToClient(Const.DirectoryAlreadyExistsMessage);
+        }
+
+        private void HandleRmdCommand(IList<string> args)
+        {
+        }
+
+        private void HandleNoopCommand()
+        {
+            SendMessageToClient(Const.CommandOkayMessage);
+        }
+
+        //si el archivo tiene espacios, juntar todo en una variable.
+        private string JoinArguments(IList<string> args)
+        {
+            if (args.Count() > 1)
+            {
+                string joined = args.First();
+                foreach (string a in args.Skip(1))
+                    joined += " " + a;
+
+                return joined;
+            }
+            else
+                return args.First();            
         }
 
         private bool IsRootDirectory(string directory)
