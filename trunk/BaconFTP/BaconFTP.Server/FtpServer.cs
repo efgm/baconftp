@@ -57,6 +57,11 @@ namespace BaconFTP.Server
             Start(IPAddress.Any, port);
         }
 
+        public static void Start(IPAddress ipAddress)
+        {
+            Start(ipAddress, ServerConfiguration.ServerPort);
+        }
+
         public static void Start(IPAddress ipAddress, int port)
         {
             _tcpListener = new TcpListener(ipAddress, port);
@@ -82,15 +87,11 @@ namespace BaconFTP.Server
                 ServerConfiguration.ServerDirectoryPath + virtualPath.Replace('/', '\\');
         }
 
-        //public static string GetFileRealPath(string virtualPath)
-        //{
-
-        //}
-
         #endregion //Interface
 
         #region Implementation
 
+        //se mantiene escuchando por conexiones, le asigna un thread a cada cliente que se conecte.
         private static void ListenForConnections()
         {
             try

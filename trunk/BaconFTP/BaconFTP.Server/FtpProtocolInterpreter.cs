@@ -73,9 +73,9 @@ namespace BaconFTP.Server
 
                     else if (cmd.Command == Const.ListCommand) HandleListCommand();
 
-                    else if (cmd.Command == Const.RetrCommand) HandleRetrCommand(cmd.Arguments.First());
+                    else if (cmd.Command == Const.RetrCommand) HandleRetrCommand(cmd.Arguments);
 
-                    else if (cmd.Command == Const.StorCommand) HandleStorCommand(cmd.Arguments.First());
+                    else if (cmd.Command == Const.StorCommand) HandleStorCommand(cmd.Arguments);
 
                     else SendMessageToClient(Const.UnknownCommandErrorMessage);
                 }
@@ -192,7 +192,7 @@ namespace BaconFTP.Server
 
         private void HandleCwdCommand(string directory) 
         {
-            if (!directory.Contains("/") /*&& !IsRootDirectory(_currentWorkingDirectory)*/)
+            if (!directory.Contains("/"))
                 directory = _currentWorkingDirectory + "/" + directory;
 
             directory = directory.Replace("//", "/");
@@ -256,8 +256,15 @@ namespace BaconFTP.Server
             new Thread(dtp.SendDirectoryListing).Start(_currentWorkingDirectory);
         }
 
-        private void HandleRetrCommand(string file)
-        {
+        private void HandleRetrCommand(IList<string> args)
+        {            
+            string file = args.First();
+
+            //si el archivo tiene espacios, juntar todo en una variable.
+            if (args.Count() > 1)
+                foreach (string a in args.Skip(1))
+                    file += " " + a;
+
             var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort, 
                                                  _transferType, _currentWorkingDirectory);
             string path = FtpServer.GetRealPath(_currentWorkingDirectory + "/" + file);
@@ -268,9 +275,16 @@ namespace BaconFTP.Server
                 SendMessageToClient("tu madre doesn't exist(temporal :P)");
         }
 
-        private void HandleStorCommand(string file)
+        private void HandleStorCommand(IList<string> args)
         {
-            var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort, 
+            string file = args.First();
+
+            //si el archivo tiene espacios, juntar todo en una variable.
+            if (args.Count() > 1)
+                foreach (string a in args.Skip(1))
+                    file += " " + a;
+
+            var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort,
                                                  _transferType, _currentWorkingDirectory);
 
             new Thread(dtp.GetFileFromClient).Start(file);
