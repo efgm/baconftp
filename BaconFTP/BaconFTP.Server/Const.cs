@@ -6,30 +6,31 @@ namespace BaconFTP.Server
     {   
         CommandNotImplemented = 120,
         DataConnection = 150,
+
         Okay = 200,
         FileOkay = 202,
         TransferComplete = 226,
-        CommandSuccessful = 250,
-        ServerOffline = 421,
-        SyntaxErrorInParameters = 501,
+        CommandSuccessful = 250,        
+
         DirectoryStatus = 212,
         FileStatus = 213,
         SystemDescrption = 215,
         ServerClosingConnection = 221,
         PassiveMode = 227,
         UserLoggedIn = 230,
-
-        WorkingDirectory = 257,
-        
+        WorkingDirectory = 257,        
         
         UserOkay = 331,
 
+        ServerOffline = 421,
+        CannotOpenDataConnection = 425,
+        DataConnectionError = 426,
         CantPerformOperation = 450,
 
-        NoUserAuthenticated = 530,
-
         Error = 500,
+        SyntaxErrorInParameters = 501,
         NotLoggedIn = 530,
+        NoUserAuthenticated = 530,
         FileNotFoundOrNoAccess = 550,
     }
 
@@ -173,6 +174,16 @@ namespace BaconFTP.Server
         internal static string CannotCreateDirectoryMessage
         {
             get { return ((int)Codes.FileNotFoundOrNoAccess) + " Cannot create directory.\r\n."; }
+        }
+
+        internal static string DataConnectionErrorMessage
+        {
+            get { return ((int)Codes.DataConnectionError) + " Data connection error.\r\n"; }
+        }
+
+        internal static string CannotOpenDataConnectionMessage
+        {
+            get { return ((int)Codes.CannotOpenDataConnection) + " Cannot open the data connection.\r\n"; }
         }
 
         #endregion //Messages
