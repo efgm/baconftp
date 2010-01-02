@@ -68,13 +68,16 @@ namespace BaconFTP.Server
                 }
             }
 
-            //if (filesList.Length > 0)
-            //{
-            //    foreach (FileInfo f in filesList)
-            //    {
-            //        sb.AppendLine(
-            //    }
-            //}
+            if (filesList.Length > 0)
+            {
+                foreach (FileInfo f in filesList)
+                {
+                    sb.AppendLine(String.Format("{0}-{1}-{2} {3}:{4} {5} {6}", f.LastWriteTime.Month,
+                                                f.LastWriteTime.Day, f.LastWriteTime.Year,
+                                                f.LastWriteTime.Hour, f.LastWriteTime.Minute,
+                                                f.Length, f.Name));
+                }
+            }
 
             return sb.ToString();
         }
