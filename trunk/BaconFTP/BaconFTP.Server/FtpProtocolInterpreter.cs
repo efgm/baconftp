@@ -347,6 +347,28 @@ namespace BaconFTP.Server
 
         private void HandleRmdCommand(IList<string> args)
         {
+            string directory = JoinArguments(args);
+            string path = FtpServer.GetRealPath(_currentWorkingDirectory + "/" + directory);
+
+            if (Directory.Exists(path))
+            {
+                try
+                {
+                    new DirectoryInfo(path).Delete();
+                    SendMessageToClient(Const.DirectoryRemovedMessage);
+                }
+                catch (IOException)
+                {
+                    SendMessageToClient(Const.CannotDeleteDirectoryMessage);
+                }
+                catch (SecurityException)
+                {
+                    SendMessageToClient(Const.NoPermissionToDeleteDirectoryMessage);
+                }
+            }
+            else
+                SendMessageToClient(Const.SyntaxErrorInParametersMessage);
+
         }
 
         private void HandleNoopCommand()
