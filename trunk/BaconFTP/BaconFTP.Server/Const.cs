@@ -49,6 +49,12 @@ namespace BaconFTP.Server
             get { return "FATAL ERROR: Server could not start.\n\n{0}\n\nPress any key to exit."; }
         }
 
+        //enviar/recibir los bytes en bloques de 4kb.
+        public static int BlockSize
+        {
+            get { return 4096; }
+        }
+
         #endregion //Constants
 
         #region Messages
