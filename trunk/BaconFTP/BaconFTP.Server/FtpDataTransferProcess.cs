@@ -60,23 +60,19 @@ namespace BaconFTP.Server
             if (directoriesList.Length > 0)
             {
                 foreach (DirectoryInfo d in directoriesList)
-                {
                     sb.AppendLine(String.Format("{0}-{1}-{2} {3}:{4} <DIR> {5}", d.LastWriteTime.Month,
                                                 d.LastWriteTime.Day, d.LastWriteTime.Year,
                                                 d.LastWriteTime.Hour, d.LastWriteTime.Minute,
                                                 d.Name));
-                }
             }
 
             if (filesList.Length > 0)
             {
                 foreach (FileInfo f in filesList)
-                {
                     sb.AppendLine(String.Format("{0}-{1}-{2} {3}:{4} {5} {6}", f.LastWriteTime.Month,
                                                 f.LastWriteTime.Day, f.LastWriteTime.Year,
                                                 f.LastWriteTime.Hour, f.LastWriteTime.Minute,
                                                 f.Length, f.Name));
-                }
             }
 
             return sb.ToString();

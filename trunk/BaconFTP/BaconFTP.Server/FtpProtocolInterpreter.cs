@@ -187,6 +187,11 @@ namespace BaconFTP.Server
 
         private void HandleCwdCommand(string directory) 
         {
+            if (!directory.Contains("/") /*&& !IsRootDirectory(_currentWorkingDirectory)*/)
+                directory = _currentWorkingDirectory + "/" + directory;
+
+            directory = directory.Replace("//", "/");
+
             if (Directory.Exists(FtpServer.GetRealPath(directory)))
             {
                 _currentWorkingDirectory = directory;
