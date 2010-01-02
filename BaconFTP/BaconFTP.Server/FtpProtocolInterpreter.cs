@@ -189,8 +189,14 @@ namespace BaconFTP.Server
         {
             if (Directory.Exists(FtpServer.GetRealPath(directory)))
             {
-                _currentWorkingDirectory += directory;
-                _currentWorkingDirectory = _currentWorkingDirectory.Replace("//", "/");
+                if (IsRootDirectory(directory))
+                    _currentWorkingDirectory = directory;
+                else
+                {
+                    _currentWorkingDirectory += directory;
+                    _currentWorkingDirectory = _currentWorkingDirectory.Replace("//", "/");
+                }
+
                 SendMessageToClient(Const.ChangeWorkingDirectoryMessage + _currentWorkingDirectory);
             }
             else
@@ -207,7 +213,7 @@ namespace BaconFTP.Server
                                         (new DirectoryInfo(FtpServer.GetRealPath(_currentWorkingDirectory))).Name,
                                         string.Empty);
 
-            if (newWorkingDir.Length == 1)
+            if (IsRootDirectory(newWorkingDir))
                 HandleCwdCommand(newWorkingDir);
             else
                 HandleCwdCommand(newWorkingDir.Substring(newWorkingDir.Length - 1));
@@ -248,6 +254,11 @@ namespace BaconFTP.Server
             var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort);
 
             new Thread(dtp.SendDirectoryListing).Start(_currentWorkingDirectory);
+        }
+
+        private bool IsRootDirectory(string directory)
+        {
+            return directory == "/" ? true : false;
         }
 
         #endregion //CommandHandling
