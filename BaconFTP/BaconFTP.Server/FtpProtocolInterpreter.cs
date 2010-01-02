@@ -195,7 +195,7 @@ namespace BaconFTP.Server
 
             directory = directory.Replace("//", "/");
 
-            if (Directory.Exists(FtpServer.GetRealPath(directory)))
+            if (Directory.Exists(FtpServer.GetDirectoryRealPath(directory)))
             {
                 _currentWorkingDirectory = directory;
 
@@ -208,7 +208,7 @@ namespace BaconFTP.Server
         private void HandleCdupCommand() 
         {
             string newWorkingDir = _currentWorkingDirectory.Replace(
-                                        (new DirectoryInfo(FtpServer.GetRealPath(_currentWorkingDirectory))).Name,
+                                        (new DirectoryInfo(FtpServer.GetDirectoryRealPath(_currentWorkingDirectory))).Name,
                                         string.Empty);
 
             _currentWorkingDirectory = IsRootDirectory(newWorkingDir) ? 
@@ -255,6 +255,13 @@ namespace BaconFTP.Server
 
         private void HandleRetrCommand(string file)
         {
+            var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort, _transferType);
+
+            string path = FtpServer.GetDirectoryRealPath(_currentWorkingDirectory + "/" + file);
+            if (File.Exists(path))
+                new Thread(dtp.SendFileToClient).Start(path);
+            else
+                SendMessageToClient("tu madre doesn't exist(temporal :P)");
         }
 
         private bool IsRootDirectory(string directory)
