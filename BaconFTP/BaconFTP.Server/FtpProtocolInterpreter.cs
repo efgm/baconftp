@@ -75,6 +75,8 @@ namespace BaconFTP.Server
 
                     else if (cmd.Command == Const.RetrCommand) HandleRetrCommand(cmd.Arguments.First());
 
+                    else if (cmd.Command == Const.StorCommand) HandleStorCommand(cmd.Arguments.First());
+
                     else SendMessageToClient(Const.UnknownCommandErrorMessage);
                 }
                 catch { continue; }
@@ -195,7 +197,7 @@ namespace BaconFTP.Server
 
             directory = directory.Replace("//", "/");
 
-            if (Directory.Exists(FtpServer.GetDirectoryRealPath(directory)))
+            if (Directory.Exists(FtpServer.GetRealPath(directory)))
             {
                 _currentWorkingDirectory = directory;
 
@@ -208,7 +210,7 @@ namespace BaconFTP.Server
         private void HandleCdupCommand() 
         {
             string newWorkingDir = _currentWorkingDirectory.Replace(
-                                        (new DirectoryInfo(FtpServer.GetDirectoryRealPath(_currentWorkingDirectory))).Name,
+                                        (new DirectoryInfo(FtpServer.GetRealPath(_currentWorkingDirectory))).Name,
                                         string.Empty);
 
             _currentWorkingDirectory = IsRootDirectory(newWorkingDir) ? 
@@ -248,20 +250,31 @@ namespace BaconFTP.Server
 
         private void HandleListCommand()
         {
-            var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort, _transferType);
+            var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort, 
+                                                 _transferType, _currentWorkingDirectory);
 
             new Thread(dtp.SendDirectoryListing).Start(_currentWorkingDirectory);
         }
 
         private void HandleRetrCommand(string file)
         {
-            var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort, _transferType);
-
-            string path = FtpServer.GetDirectoryRealPath(_currentWorkingDirectory + "/" + file);
+            var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort, 
+                                                 _transferType, _currentWorkingDirectory);
+            string path = FtpServer.GetRealPath(_currentWorkingDirectory + "/" + file);
+            
             if (File.Exists(path))
                 new Thread(dtp.SendFileToClient).Start(path);
             else
                 SendMessageToClient("tu madre doesn't exist(temporal :P)");
+        }
+
+        private void HandleStorCommand(string file)
+        {
+            var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort, 
+                                                 _transferType, _currentWorkingDirectory);
+
+            new Thread(dtp.GetFileFromClient).Start(file);
+
         }
 
         private bool IsRootDirectory(string directory)
