@@ -284,7 +284,7 @@ namespace BaconFTP.Server
             if (File.Exists(path))
                 new Thread(dtp.SendFileToClient).Start(path);
             else
-                SendMessageToClient("tu madre doesn't exist(temporal :P)");
+                SendMessageToClient(Const.SyntaxErrorInParametersMessage);
         }
 
         private void HandleStorCommand(IList<string> args)
