@@ -37,7 +37,8 @@ namespace BaconFTP.Server
         {
             SendMessageToClient(Const.WelcomeMessage);
 
-            GetClientUsername();
+            try { GetClientUsername(); }
+            catch { return false; }
 
             if (!String.IsNullOrEmpty(_client.Username))
                 return _client.Username == Const.AnonymousUser ? 
@@ -141,20 +142,30 @@ namespace BaconFTP.Server
         {
             ClientCommand cmd = GetCommandFromClient();
 
+            if (cmd == null)
+                throw new Exception("Expecting PASS command..");
+
             if (cmd.Command == Const.PassCommand)
             {
                 _client.Password = cmd.Arguments.First();
 
                 SendMessageToClient(Const.UserLoggedInMessage);
             }
+            else
+                throw new Exception("Expecting PASS command..");
         }
 
         private void GetPasswordFromUser()
         {
             ClientCommand cmd = GetCommandFromClient();
 
-            if (cmd.Command == Const.PassCommand)            
+            if (cmd == null)
+                throw new Exception("Expecting PASS command..");
+
+            if (cmd.Command == Const.PassCommand)
                 _client.Password = cmd.Arguments.First();
+            else
+                throw new Exception("Expecting PASS command..");
         }
 
         private byte[] Encode(string str)
@@ -402,11 +413,15 @@ namespace BaconFTP.Server
 
         private bool AuthenticateAnonymousUser()
         {
-            SendMessageToClient(Const.AnonymousUserAllowedMessage);
-            GetAnonymousPasswordAndValidate();
+            try
+            {
+                SendMessageToClient(Const.AnonymousUserAllowedMessage);
+                GetAnonymousPasswordAndValidate();
 
-            _logger.Write("Logged in as \'{0}\' from {1}", 
-                           _client.Username, _client.EndPoint);
+                _logger.Write("Logged in as \'{0}\' from {1}",
+                               _client.Username, _client.EndPoint);
+            }
+            catch { return false; }
             return true;
         }
 
