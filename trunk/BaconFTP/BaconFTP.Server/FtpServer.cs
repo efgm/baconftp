@@ -121,7 +121,7 @@ namespace BaconFTP.Server
         {
             FtpClient ftpClient = (FtpClient)client;
 
-            _logger.Write("Connection with {0} established.", ftpClient.EndPoint);
+            _logger.Write("Connection with {0} established.", ftpClient.EndPoint);            
 
             IFtpProtocol protocol = new FtpProtocolInterpreter(ftpClient, _logger);
 
