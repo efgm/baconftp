@@ -70,7 +70,7 @@ namespace BaconFTP.Server
 
         internal static string WelcomeMessage
         {
-            get { return ((int)Codes.Okay) + " Welcome to BaconFTP Server.\r\n"; }
+            get { return ((int)Codes.Okay) + " Welcome to BaconFTP Server " + Const.ServerVersion + ".\r\n"; }
         }
 
         internal static string UserLoggedInMessage
