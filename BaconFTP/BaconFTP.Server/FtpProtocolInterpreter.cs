@@ -261,15 +261,17 @@ namespace BaconFTP.Server
              */
             StringBuilder sb = new StringBuilder();
 
+            string[] serverIp = GetServerIpAddress();
+
             string pasvReply = (int)Codes.PassiveMode +
                                String.Format(" Entering Passive Mode ({0},{1},{2},{3},{4},{5}).\r\n",
-                                             127, 0, 0, 1,
+                                             serverIp[0], serverIp[1], serverIp[2], serverIp[3],
                                              (_dataPort - (_dataPort % 256)) / 256,
                                              _dataPort % 256);
 
             SendMessageToClient(pasvReply);
         }
-
+        
         private void HandleTypeCommand(string type)
         {
             _transferType = type;
@@ -385,6 +387,26 @@ namespace BaconFTP.Server
         private void HandleNoopCommand()
         {
             SendMessageToClient(Const.CommandOkayMessage);
+        }
+
+        internal string[] GetServerIpAddress()
+        {
+            return ClientIsLocal(_client) ? 
+                _client.TcpClientObject.Client.LocalEndPoint.ToString().Split(':').First().Split('.') 
+                :
+                FtpServer.ServerIP.ToString().Split('.');
+        }
+
+        private bool ClientIsLocal(FtpClient client)
+        {
+            //sacar cada parte del ip por separado y meterlo en el arreglo
+            string[] clientIp = client.EndPoint.ToString().Split(':').First().Split('.');
+
+            return ((clientIp[0] == "192" && clientIp[1] == "168") ||
+                    (clientIp[0] == "10" && clientIp[1] == "0")    ||
+                    (clientIp[0] == "172" && clientIp[1] == "16")  ||
+                    (clientIp[0] == "127" && clientIp[1] == "0")   || 
+                    (clientIp[0] == "169" && clientIp[1] == "254")) ? true : false;
         }
 
         //si el archivo tiene espacios, juntar todo en una variable.
