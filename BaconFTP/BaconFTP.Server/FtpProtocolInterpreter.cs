@@ -23,6 +23,7 @@ namespace BaconFTP.Server
         private string _currentWorkingDirectory;
         private int _dataPort;
         private string _transferType;
+        private List<int> _usedPorts = new List<int>();
 
         #endregion
 
@@ -189,8 +190,10 @@ namespace BaconFTP.Server
 
         private int GenerateDataPort()
         {
-            int port = (new Random()).Next(1024, 65536);
-            return PortIsAvailable(port) ? port : GenerateDataPort();
+            int port = (new Random()).Next(1024, IPEndPoint.MaxPort);
+            _usedPorts.Add(port);
+             
+            return (PortIsAvailable(port) && port != FtpServer.ServerPort) ? port : GenerateDataPort();
         }
 
         private bool PortIsAvailable(int port)
@@ -299,10 +302,10 @@ namespace BaconFTP.Server
         {
             string file = JoinArguments(args);
 
-            var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort, 
+            var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort,
                                                  _transferType, _currentWorkingDirectory);
             string path = FtpServer.GetRealPath(_currentWorkingDirectory + "/" + file);
-            
+
             if (File.Exists(path))
                 new Thread(dtp.SendFileToClient).Start(path);
             else

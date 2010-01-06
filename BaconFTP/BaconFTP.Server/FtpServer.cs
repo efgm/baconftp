@@ -30,6 +30,11 @@ namespace BaconFTP.Server
             get { return IPAddress.Parse(new WebClient().DownloadString("http://whatismyip.org")); }
         }
 
+        public static int ServerPort
+        {
+            get { return ServerConfiguration.ServerPort; }
+        }
+
         #endregion
 
         #region Constructor(s)
@@ -125,10 +130,10 @@ namespace BaconFTP.Server
 
             _logger.Write("Connection with {0} established.", ftpClient.EndPoint);            
 
-            IFtpProtocol protocol = new FtpProtocolInterpreter(ftpClient, _logger);
+            var protocolInterpreter = new FtpProtocolInterpreter(ftpClient, _logger);
 
-            if (protocol.PerformHandShake())
-                protocol.ListenForCommands();
+            if (protocolInterpreter.PerformHandShake())
+                protocolInterpreter.ListenForCommands();
             else
                 CloseConnection(ftpClient);
         }
