@@ -50,7 +50,6 @@
     <Compile Include="FtpDataTransferProcess.cs" />
     <Compile Include="FtpClient.cs" />
     <Compile Include="FtpProtocolInterpreter.cs" />
-    <Compile Include="IFtpProtocol.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FtpServer.cs" />
   </ItemGroup>

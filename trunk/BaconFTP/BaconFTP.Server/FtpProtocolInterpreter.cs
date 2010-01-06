@@ -13,8 +13,10 @@ using System.Security;
 
 namespace BaconFTP.Server
 {
-    internal class FtpProtocolInterpreter : IFtpProtocol
+    internal class FtpProtocolInterpreter
     {
+        #region Fields
+
         private readonly FtpClient _client;
         private readonly IAccountRepository _accRepo = new AccountRepository();
         private readonly ILogger _logger;
@@ -22,6 +24,10 @@ namespace BaconFTP.Server
         private int _dataPort;
         private string _transferType;
 
+        #endregion
+
+        #region Constructor(s)
+        
         internal FtpProtocolInterpreter(FtpClient client, ILogger logger)
         {
             _client = client;
@@ -30,10 +36,12 @@ namespace BaconFTP.Server
             _currentWorkingDirectory = "/";
         }
 
-        #region IFtpProtocol Members
+        #endregion
+
+        #region Interface
 
         //valida el usuario y da acceso
-        public bool PerformHandShake()
+        internal bool PerformHandShake()
         {
             SendMessageToClient(Const.WelcomeMessage);
 
@@ -48,8 +56,8 @@ namespace BaconFTP.Server
 
         }
 
-        //escuchar infinitamente los comandos del cliente conectado.
-        public void ListenForCommands()
+        //escuchar "infinitamente" los comandos del cliente conectado.
+        internal void ListenForCommands()
         {
             while (true)
             {
@@ -138,6 +146,7 @@ namespace BaconFTP.Server
             
         }
 
+        //obtiene la clave
         private void GetAnonymousPasswordAndValidate()
         {
             ClientCommand cmd = GetCommandFromClient();

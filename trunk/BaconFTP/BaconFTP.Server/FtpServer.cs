@@ -70,6 +70,7 @@ namespace BaconFTP.Server
             _listenerThread.Start();
         }
 
+        //cierra la conexion con un cliente
         public static void CloseConnection(FtpClient client)
         {
             _connectedClients.Remove(client);
@@ -117,6 +118,7 @@ namespace BaconFTP.Server
             }
         }
 
+        //maneja la conexion del cliente
         private static void HandleClientConnection(object client)
         {
             FtpClient ftpClient = (FtpClient)client;
