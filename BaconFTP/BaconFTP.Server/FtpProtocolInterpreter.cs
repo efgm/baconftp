@@ -24,9 +24,10 @@ namespace BaconFTP.Server
         private int _dataPort;
         private string _transferType;
         private List<int> _usedPorts = new List<int>();
+        private Random _randomNumGenerator = new Random();
 
         #endregion
-
+         
         #region Constructor(s)
         
         internal FtpProtocolInterpreter(FtpClient client, ILogger logger)
@@ -190,7 +191,7 @@ namespace BaconFTP.Server
 
         private int GenerateDataPort()
         {
-            int port = (new Random()).Next(1024, IPEndPoint.MaxPort);
+            int port = _randomNumGenerator.Next(1024, IPEndPoint.MaxPort);
             _usedPorts.Add(port);
              
             return (PortIsAvailable(port) && port != FtpServer.ServerPort) ? port : GenerateDataPort();
