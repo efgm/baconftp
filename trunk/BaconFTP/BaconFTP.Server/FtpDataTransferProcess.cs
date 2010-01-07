@@ -46,39 +46,44 @@ namespace BaconFTP.Server
 
         private void OpenDataConnection(string type, object file)
         {
-            SendMessageToClient(Const.OpeningDataConnectionMessage(_transferType));
-
-            _tcpListener.Start();
-
-            try
+            //hacer el lock para que no ocurran colisiones de 2 o mas clientes tratando de conectarse
+            //al mismo puerto provisto por el comando PASV
+            lock (this)
             {
-                using (TcpClient dataClient = _tcpListener.AcceptTcpClient())
+                SendMessageToClient(Const.OpeningDataConnectionMessage(_transferType));
+
+                _tcpListener.Start();
+
+                try
                 {
-                    _logger.Write("Opening data connection with {0} on port {1}.", dataClient.Client.RemoteEndPoint, _dataPort);
-
-                    if (type == "STOR")
-                        GetFileFromClient(dataClient, file as string);
-                    else if (type == "RETR")
-                        SendFileToClient(dataClient, file as string);
-                    else if (type == "LIST")
+                    using (TcpClient dataClient = _tcpListener.AcceptTcpClient())
                     {
-                        _logger.Write("Sending directory listing to {0}.", dataClient.Client.RemoteEndPoint);
-                        SendDataToClient(dataClient, GenerateDirectoryList(file as string));
+                        _logger.Write("Opening data connection with {0} on port {1}.", dataClient.Client.RemoteEndPoint, _dataPort);
+
+                        if (type == "STOR")
+                            GetFileFromClient(dataClient, file as string);
+                        else if (type == "RETR")
+                            SendFileToClient(dataClient, file as string);
+                        else if (type == "LIST")
+                        {
+                            _logger.Write("Sending directory listing to {0}.", dataClient.Client.RemoteEndPoint);
+                            SendDataToClient(dataClient, GenerateDirectoryList(file as string));
+                        }
+
+                        _logger.Write("Closing data connection with {0}.", dataClient.Client.RemoteEndPoint);
                     }
-
-                    _logger.Write("Closing data connection with {0}.", dataClient.Client.RemoteEndPoint);
                 }
-            }
-            catch (SocketException)
-            {
-                _tcpListener.Stop();
-                SendMessageToClient(Const.CannotOpenDataConnectionMessage);
+                catch (SocketException)
+                {
+                    _tcpListener.Stop();
+                    SendMessageToClient(Const.CannotOpenDataConnectionMessage);
 
-                return;
+                    return;
+                }
+
+                _tcpListener.Stop();
+                SendMessageToClient(Const.TransferCompleteMessage);
             }
-            
-            _tcpListener.Stop();
-            SendMessageToClient(Const.TransferCompleteMessage);
         }
 
         private string GenerateDirectoryList(string dir)
@@ -160,28 +165,37 @@ namespace BaconFTP.Server
 
         private void GetFileFromClient(TcpClient dataClient, string file)
         {
-            using (FileStream fs = new FileStream(FtpServer.GetRealPath(_currentDirectory + "/" + file),
-                                                  FileMode.Create))
+            try
             {
-                byte[] buffer = new byte[Const.BlockSize];
-                int bytesRead;
-                Stream clientStream = dataClient.GetStream();
-
-                _logger.Write("Recieving file '{0}' from {1}.", file, dataClient.Client.RemoteEndPoint);
-
-                try
+                using (FileStream fs = new FileStream(FtpServer.GetRealPath(_currentDirectory + "/" + file),
+                                                      FileMode.Create))
                 {
-                    while ((bytesRead = clientStream.Read(buffer, 0, buffer.Length)) != 0)
-                        fs.Write(buffer, 0, bytesRead);
-                }
-                catch (Exception e)
-                {
-                    _logger.Write("Error: {0}.", e.Message);
-                    SendMessageToClient(Const.DataConnectionErrorMessage);
-                    return;
-                }
+                    byte[] buffer = new byte[Const.BlockSize];
+                    int bytesRead;
+                    Stream clientStream = dataClient.GetStream();
 
-                _logger.Write("Successfully recieved File '{0}' from {1}.", file, dataClient.Client.RemoteEndPoint);
+                    _logger.Write("Recieving file '{0}' from {1}.", file, dataClient.Client.RemoteEndPoint);
+
+                    try
+                    {
+                        while ((bytesRead = clientStream.Read(buffer, 0, buffer.Length)) != 0)
+                            fs.Write(buffer, 0, bytesRead);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Write("Error: {0}.", e.Message);
+                        SendMessageToClient(Const.DataConnectionErrorMessage);
+                        return;
+                    }
+
+                    _logger.Write("Successfully recieved File '{0}' from {1}.", file, dataClient.Client.RemoteEndPoint);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Write("Error: {0}.", e.Message);
+                SendMessageToClient(Const.DataConnectionErrorMessage);
+                return;
             }
         }
 
