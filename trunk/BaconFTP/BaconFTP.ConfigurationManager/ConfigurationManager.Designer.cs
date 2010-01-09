@@ -40,7 +40,6 @@
             this.tbServerDirPath = new System.Windows.Forms.TextBox();
             this.btnBrowseServerPath = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.tbServerPort = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.cbLoggingMethods = new System.Windows.Forms.ComboBox();
@@ -60,6 +59,7 @@
             this.btnEdit = new System.Windows.Forms.Button();
             this.btnAcceptOrCancel = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.maskedTextBox1 = new System.Windows.Forms.MaskedTextBox();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -70,12 +70,12 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.maskedTextBox1);
             this.groupBox1.Controls.Add(this.btnCancel);
             this.groupBox1.Controls.Add(this.cbLoggingMethods);
             this.groupBox1.Controls.Add(this.btnAccept);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.tbServerPort);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.btnBrowseServerPath);
             this.groupBox1.Controls.Add(this.tbServerDirPath);
@@ -176,13 +176,6 @@
             this.label2.Size = new System.Drawing.Size(29, 13);
             this.label2.TabIndex = 5;
             this.label2.Text = "Port:";
-            // 
-            // tbServerPort
-            // 
-            this.tbServerPort.Location = new System.Drawing.Point(129, 49);
-            this.tbServerPort.Name = "tbServerPort";
-            this.tbServerPort.Size = new System.Drawing.Size(71, 20);
-            this.tbServerPort.TabIndex = 6;
             // 
             // label3
             // 
@@ -354,6 +347,14 @@
             this.btnAcceptOrCancel.Text = "Accept";
             this.btnAcceptOrCancel.UseVisualStyleBackColor = true;
             // 
+            // maskedTextBox1
+            // 
+            this.maskedTextBox1.Location = new System.Drawing.Point(129, 49);
+            this.maskedTextBox1.Mask = "0>9<65536";
+            this.maskedTextBox1.Name = "maskedTextBox1";
+            this.maskedTextBox1.Size = new System.Drawing.Size(71, 20);
+            this.maskedTextBox1.TabIndex = 10;
+            // 
             // ConfigurationManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -394,7 +395,6 @@
         private System.Windows.Forms.ComboBox cbLoggingMethods;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox tbServerPort;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnAccept;
         private System.Windows.Forms.Button btnCancel;
@@ -412,6 +412,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.MaskedTextBox maskedTextBox1;
     }
 }
 
