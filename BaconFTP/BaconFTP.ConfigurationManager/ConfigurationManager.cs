@@ -26,7 +26,7 @@ namespace BaconFTP.ConfigurationManager
 
         private void LoadUsers()
         {
-            cbUsers.DataSource = _accountRepository.GetAll();
+            cbUsers.DataSource = _accountRepository.GetAll();            
         }
 
         private void LoadLoggingMethods()
@@ -57,6 +57,20 @@ namespace BaconFTP.ConfigurationManager
             MessageBox.Show(String.Format(message, args), 
                             "Error parsing the configuration file.", 
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void btnBrowseServerPath_Click(object sender, EventArgs e)
+        {
+            switch (folderBrowserDialog1.ShowDialog())
+            {
+                case DialogResult.OK:
+                    tbServerDirPath.Text = folderBrowserDialog1.SelectedPath;
+                    break;
+
+                case DialogResult.Cancel:
+                    break;
+            }
+           
         }
     }
 }
