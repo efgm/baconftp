@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using BaconFTP.Data.Configuration;
 using BaconFTP.Data.Repositories;
+using System.Text.RegularExpressions;
 
 namespace BaconFTP.ConfigurationManager
 {
