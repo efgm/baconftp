@@ -24,6 +24,18 @@ namespace BaconFTP.Data.Repositories
             _root = _accountsXmlFile.Root;
         }
 
+        public IEnumerable<Account> GetAll()
+        {
+            return (from a in _root.Elements()
+                    select new Account
+                    {
+                        AccountID = new Guid(a.Attribute("id").Value),
+                        Username = a.Attribute("username").Value,
+                        Password = Encryp_Decrypt.Decrypt(a.Attribute("password").Value,
+                                                          Const.ClearTextForEncriptDecript)
+                    }).AsEnumerable<Account>();
+        }
+
         public Account GetByUsername(string username)
         {
             try

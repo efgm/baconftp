@@ -7,15 +7,23 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using BaconFTP.Data.Configuration;
+using BaconFTP.Data.Repositories;
 
 namespace BaconFTP.ConfigurationManager
 {
     public partial class ConfigurationManager : Form
     {
+        private IAccountRepository _accountRepository = new AccountRepository();
+
         public ConfigurationManager()
         {
             InitializeComponent();
             LoadConfigurationFile();
+        }
+
+        private void LoadUsers()
+        {
+            cbUsers.DataSource = _accountRepository.GetAll();
         }
 
         private void LoadConfigurationFile()
