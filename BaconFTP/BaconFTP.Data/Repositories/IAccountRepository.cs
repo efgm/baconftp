@@ -7,7 +7,7 @@ namespace BaconFTP.Data.Repositories
 {
     public interface IAccountRepository
     {
-        IEnumerable<Account> GetAll();
+        Account[] GetAll();
         Account GetByUsername(string username);
         void Add(Account item);
     }
