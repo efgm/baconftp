@@ -59,6 +59,7 @@
             this.tbUsername = new System.Windows.Forms.TextBox();
             this.btnEdit = new System.Windows.Forms.Button();
             this.btnAcceptOrCancel = new System.Windows.Forms.Button();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -165,6 +166,7 @@
             this.btnBrowseServerPath.TabIndex = 4;
             this.btnBrowseServerPath.Text = "...";
             this.btnBrowseServerPath.UseVisualStyleBackColor = true;
+            this.btnBrowseServerPath.Click += new System.EventHandler(this.btnBrowseServerPath_Click);
             // 
             // label2
             // 
@@ -409,6 +411,7 @@
         private System.Windows.Forms.TextBox tbPassword;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
     }
 }
 
