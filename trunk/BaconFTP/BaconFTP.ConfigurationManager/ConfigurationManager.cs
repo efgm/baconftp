@@ -18,12 +18,20 @@ namespace BaconFTP.ConfigurationManager
         public ConfigurationManager()
         {
             InitializeComponent();
+
             LoadConfigurationFile();
+            LoadUsers();
+            LoadLoggingMethods();
         }
 
         private void LoadUsers()
         {
             cbUsers.DataSource = _accountRepository.GetAll();
+        }
+
+        private void LoadLoggingMethods()
+        {
+            cbLoggingMethods.DataSource = new string[] { "Console", "File" };
         }
 
         private void LoadConfigurationFile()
