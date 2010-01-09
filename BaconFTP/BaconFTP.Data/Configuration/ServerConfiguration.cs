@@ -17,8 +17,9 @@ namespace BaconFTP.Data.Configuration
         internal static string DefaultPortElement = "port";        
         internal static string ConfigurationRootElement = "baconftp_config";
         internal static string LoggingMethodElement = "logging";
-        internal static string ConsoleLogginMethod = "console";
+        internal static string ConsoleLoggingMethod = "console";
         internal static string FileLoggingMethod = "file";
+        internal static string DefaultServerPort = "21";
     }
 
     //clase que maneja la configuracion del server en un archivo xml
@@ -79,11 +80,18 @@ namespace BaconFTP.Data.Configuration
             if (loggerTagValue == Const.FileLoggingMethod)
                 return new FileLogger();
 
-            else if (loggerTagValue == Const.ConsoleLogginMethod)
+            else if (loggerTagValue == Const.ConsoleLoggingMethod)
                 return new ConsoleLogger();
 
             else
                 throw new LoggingMethodUnknownException();
+        }
+
+        public static void GenerateConfigurationFile()
+        {
+            GenerateConfigurationFile(CreateDefaultServerFolder().FullName,
+                                      Const.DefaultServerPort,
+                                      Const.ConsoleLoggingMethod);
         }
 
         #endregion
@@ -112,17 +120,17 @@ namespace BaconFTP.Data.Configuration
             _configXmlFile.Save(_pathToXmlFile);
         }
 
-        private static void GenerateConfigurationFile()
+        private static void GenerateConfigurationFile(string directory, string port, string loggingMethod)
         {
             (new XDocument(
                 new XDeclaration("1.0", "utf-8", "yes"),
-                new XElement(Const.ConfigurationRootElement,                             
-                             new XElement(Const.ServerDirectoryElement, CreateDefaultServerFolder().FullName),
-                             new XElement(Const.DefaultPortElement, 21),
-                             new XElement(Const.LoggingMethodElement, Const.ConsoleLogginMethod)
+                new XElement(Const.ConfigurationRootElement,
+                             new XElement(Const.ServerDirectoryElement, directory),
+                             new XElement(Const.DefaultPortElement, port),
+                             new XElement(Const.LoggingMethodElement, loggingMethod)
                              )
                            )
-             ).Save(_pathToXmlFile);
+            ).Save(_pathToXmlFile);
         }
 
         private static DirectoryInfo CreateDefaultServerFolder()
