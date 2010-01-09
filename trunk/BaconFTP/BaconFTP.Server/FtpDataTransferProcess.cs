@@ -50,12 +50,12 @@ namespace BaconFTP.Server
             //al mismo puerto provisto por el comando PASV
             lock (this)
             {
-                SendMessageToClient(Const.OpeningDataConnectionMessage(_transferType));
-
-                _tcpListener.Start();
+                SendMessageToClient(Const.OpeningDataConnectionMessage(_transferType));                
 
                 try
                 {
+                    _tcpListener.Start();
+
                     using (TcpClient dataClient = _tcpListener.AcceptTcpClient())
                     {
                         _logger.Write("Opening data connection with {0} on port {1}.", dataClient.Client.RemoteEndPoint, _dataPort);
@@ -139,27 +139,36 @@ namespace BaconFTP.Server
 
         private void SendFileToClient(TcpClient dataClient, string file)
         {
-            using (FileStream fs = new FileInfo(file).OpenRead())
+            try
             {
-                byte[] buffer = new byte[Const.BlockSize];
-                int bytesRead;
-                Stream clientStream = dataClient.GetStream();
-
-                _logger.Write("Starting transfer of file '{0}' with {1}.", file, dataClient.Client.RemoteEndPoint);
-
-                try
+                using (FileStream fs = new FileInfo(file).OpenRead())
                 {
-                    while ((bytesRead = fs.Read(buffer, 0, buffer.Length)) != 0)
-                        clientStream.Write(buffer, 0, bytesRead);
-                }
-                catch (Exception e)
-                {
-                    _logger.Write("Error: {0}.", e.Message);
-                    SendMessageToClient(Const.DataConnectionErrorMessage);
-                    return; 
-                }
+                    byte[] buffer = new byte[Const.BlockSize];
+                    int bytesRead;
+                    Stream clientStream = dataClient.GetStream();
 
-                _logger.Write("File '{0}' successfully transfered to {1}.", file, dataClient.Client.RemoteEndPoint);
+                    _logger.Write("Starting transfer of file '{0}' with {1}.", file, dataClient.Client.RemoteEndPoint);
+
+                    try
+                    {
+                        while ((bytesRead = fs.Read(buffer, 0, buffer.Length)) != 0)
+                            clientStream.Write(buffer, 0, bytesRead);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Write("Error: {0}.", e.Message);
+                        SendMessageToClient(Const.DataConnectionErrorMessage);
+                        return;
+                    }
+
+                    _logger.Write("File '{0}' successfully transfered to {1}.", file, dataClient.Client.RemoteEndPoint);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Write("Error: {0}.", e.Message);
+                SendMessageToClient(Const.DataConnectionErrorMessage);
+                return;
             }
         }
 
