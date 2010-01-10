@@ -73,6 +73,19 @@ namespace BaconFTP.Data.Configuration
             set { SetValue(Const.DefaultPortElement, value.ToString()); }
         }
 
+        public static string Logger
+        {
+            get { return GetValueFrom(Const.LoggingMethodElement); }
+            set
+            {
+                if (string.Equals(Const.FileLoggingMethod, value, StringComparison.CurrentCultureIgnoreCase))
+                    SetValue(Const.LoggingMethodElement, Const.FileLoggingMethod);
+
+                else if (string.Equals(Const.ConsoleLoggingMethod, value, StringComparison.CurrentCultureIgnoreCase))
+                    SetValue(Const.LoggingMethodElement, Const.ConsoleLoggingMethod);
+            }
+        }
+
         public static ILogger GetLoggerInstance()
         {
             string loggerTagValue = GetValueFrom(Const.LoggingMethodElement);
