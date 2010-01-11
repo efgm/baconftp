@@ -1,9 +1,9 @@
-﻿using System.Text;
-using BaconFTP.Data.Logger;
-using System.Net.Sockets;
-using System.Net;
+﻿using System;
 using System.IO;
-using System;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using BaconFTP.Data.Logger;
 
 namespace BaconFTP.Server
 {

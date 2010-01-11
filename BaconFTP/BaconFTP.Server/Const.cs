@@ -31,7 +31,7 @@ namespace BaconFTP.Server
         SyntaxErrorInParameters = 501,
         NotLoggedIn = 530,
         NoUserAuthenticated = 530,
-        FileNotFoundOrNoAccess = 550,
+        FileNotFoundOrNoAccess = 550,        
     }
 
     public class Const
@@ -45,7 +45,7 @@ namespace BaconFTP.Server
 
         internal static string ServerVersion
         {
-            get { return "0.9beta"; }
+            get { return "1.0"; }
         }
 
         public static string FatalErrorFormatString
@@ -200,6 +200,12 @@ namespace BaconFTP.Server
         {
             get { return ((int)Codes.CommandSuccessful) + " Directory removed.\r\n"; }
         }
+
+        internal static string PermissionDeniedMessage
+        {
+            get { return ((int)Codes.FileNotFoundOrNoAccess) + " Permission denied.\r\n"; }
+        }
+
 
         #endregion //Messages
 

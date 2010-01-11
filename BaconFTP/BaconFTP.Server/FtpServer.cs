@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Net;
-using BaconFTP.Data.Logger;
 using BaconFTP.Data.Configuration;
-using System.Diagnostics;
+using BaconFTP.Data.Logger;
 
 namespace BaconFTP.Server
 {
@@ -76,7 +74,7 @@ namespace BaconFTP.Server
         }
 
         //cierra la conexion con un cliente
-        public static void CloseConnection(FtpClient client)
+        internal static void CloseConnection(FtpClient client)
         {
             _connectedClients.Remove(client);
 
