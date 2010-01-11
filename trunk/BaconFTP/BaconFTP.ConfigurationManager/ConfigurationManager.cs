@@ -10,12 +10,14 @@ using BaconFTP.Data.Configuration;
 using BaconFTP.Data.Repositories;
 using System.Text.RegularExpressions;
 using System.IO;
+using BaconFTP.Data;
 
 namespace BaconFTP.ConfigurationManager
 {
     public partial class ConfigurationManager : Form
     {
         private readonly IAccountRepository _accountRepository = new AccountRepository();
+        private string _editMode;
 
         public ConfigurationManager()
         {
@@ -67,13 +69,25 @@ namespace BaconFTP.ConfigurationManager
             OpenHelpFile();
         }
 
+        private void btnAcceptOrCancel_Click(object sender, EventArgs e)
+        {
+            AddUser();
+        }
+
         #endregion //Event handlers
 
         #region Implementation
 
         private void LoadUsers()
         {
-            cbUsers.DataSource = _accountRepository.GetAll();
+            var userList = _accountRepository.GetAll();
+            var usernameList = new List<string>();
+
+            foreach (Account a in userList)
+                usernameList.Add(a.Username);
+
+            cbUsers.DataSource = usernameList;
+            cbUsers.SelectedIndex = -1;    
         }
 
         private void LoadLoggingMethods()
@@ -172,5 +186,83 @@ namespace BaconFTP.ConfigurationManager
         }
 
         #endregion
+
+        private void btnAddNewUser_Click(object sender, EventArgs e)
+        {
+            SetAddUserMode();
+        }
+
+        private void SetAddUserMode()
+        {
+            _editMode = "add";
+
+            tbUsername.Text = string.Empty;
+            tbPassword.Text = string.Empty;
+
+            tbUsername.Enabled = true;
+            tbPassword.Enabled = true;
+
+            btnAddNewUser.Enabled = false;
+            btnEdit.Enabled = false;
+            btnDelete.Enabled = false;
+            btnAcceptOrCancel.Enabled = true;
+            btnCancel.Enabled = true;
+
+            cbUsers.Enabled = false;
+        }
+
+        private void SetSelectUserMode()
+        {
+            _editMode = "select";
+
+            btnAcceptOrCancel.Enabled = false;
+            btnCancel.Enabled = false;
+            btnEdit.Enabled = false;
+            btnDelete.Enabled = false;
+            btnAddNewUser.Enabled = true;
+
+            tbUsername.Enabled = false;
+            tbPassword.Enabled = false;
+
+            cbUsers.Enabled = true;
+        }
+
+        private void AddUser()
+        {
+            try
+            {
+                ValidateUserData();
+            }
+            catch (Exception e)
+            {
+                ShowError("Error", e.Message);
+                return;
+            }
+
+            SaveUser();
+        }
+
+        private void SaveUser()
+        {
+            _accountRepository.Add(new Account(tbUsername.Text, tbPassword.Text));
+            ShowInfo("User has been added.", "User {0} has been added successfully.", tbUsername.Text);
+
+            LoadUsers();
+            SetSelectUserMode();
+        }
+
+        private void ValidateUserData()
+        {
+            if (string.IsNullOrEmpty(tbUsername.Text))
+                throw new Exception("Please enter a valid username.");
+            if (string.IsNullOrEmpty(tbPassword.Text))
+                throw new Exception("Please enter a vaid password.");
+        }
+
+        private void cbUsers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbUsers.SelectedIndex != -1)
+                ShowInfo("b", cbUsers.SelectedItem.ToString());
+        }
     }
 }
