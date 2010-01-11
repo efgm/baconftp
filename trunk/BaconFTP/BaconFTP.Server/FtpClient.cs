@@ -1,29 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Net;
 
 namespace BaconFTP.Server
 {
-    public class FtpClient
+    internal class FtpClient
     {
-        public NetworkStream Stream { get; private set; }
-        public TcpClient TcpClientObject { get; private set; }
-        public EndPoint EndPoint { get; private set; }
+        internal NetworkStream Stream { get; private set; }
+        internal TcpClient TcpClientObject { get; private set; }
+        internal EndPoint EndPoint { get; private set; }
 
-        public string Username { get; set; }
-        public string Password { get; set; }
+        internal string Username { get; set; }
+        internal string Password { get; set; }
 
-        public FtpClient(TcpClient clientObject)
+        internal FtpClient(TcpClient clientObject)
         {
             TcpClientObject = clientObject;
             Stream = clientObject.GetStream();
             EndPoint = clientObject.Client.RemoteEndPoint;
         }
 
-        public void CloseConnection()
+        internal void CloseConnection()
         {
             TcpClientObject.Close();
         }

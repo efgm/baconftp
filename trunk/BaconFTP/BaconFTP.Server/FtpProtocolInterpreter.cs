@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Security;
+using System.Text;
 using System.Threading;
 using BaconFTP.Data;
-using BaconFTP.Data.Repositories;
 using BaconFTP.Data.Logger;
-using System.Net.Sockets;
-using System.Net;
-using System.Security;
+using BaconFTP.Data.Repositories;
 
 namespace BaconFTP.Server
 {
@@ -20,6 +20,8 @@ namespace BaconFTP.Server
         private readonly FtpClient _client;
         private readonly IAccountRepository _accRepo = new AccountRepository();
         private readonly ILogger _logger;
+
+        private Account _userAccount = null;
         private string _currentWorkingDirectory;
         private int _dataPort;
         private string _transferType;
@@ -111,6 +113,11 @@ namespace BaconFTP.Server
         private bool AreEqual(string s1, string s2)
         {
             return string.Equals(s1, s2, StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        private bool UserIsAnonymous()
+        {
+            return _userAccount == null ? true : false;
         }
 
         private void SendMessageToClient(string message)
@@ -315,86 +322,103 @@ namespace BaconFTP.Server
 
         private void HandleStorCommand(IList<string> args)
         {
-            string file = JoinArguments(args);
+            if (!UserIsAnonymous())
+            {
+                string file = JoinArguments(args);
 
-            var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort,
-                                                 _transferType, _currentWorkingDirectory);
+                var dtp = new FtpDataTransferProcess(_client, _logger, _dataPort,
+                                                     _transferType, _currentWorkingDirectory);
 
-            new Thread(dtp.GetFileFromClient).Start(file);
-
+                new Thread(dtp.GetFileFromClient).Start(file);
+            }
+            else
+                SendMessageToClient(Const.PermissionDeniedMessage);
         }
 
         private void HandleDeleCommand(IList<string> args)
         {
-            string file = JoinArguments(args);
-            string path = FtpServer.GetRealPath(_currentWorkingDirectory + "/" + file);
-
-            if (File.Exists(path))
+            if (!UserIsAnonymous())
             {
-                try
+                string file = JoinArguments(args);
+                string path = FtpServer.GetRealPath(_currentWorkingDirectory + "/" + file);
+
+                if (File.Exists(path))
                 {
-                    new FileInfo(path).Delete();
-                    SendMessageToClient(Const.FileOperationOkayMessage);
+                    try
+                    {
+                        new FileInfo(path).Delete();
+                        SendMessageToClient(Const.FileOperationOkayMessage);
+                    }
+                    catch (IOException)
+                    {
+                        SendMessageToClient(Const.CannotDeleteFileMessage);
+                    }
+                    catch (SecurityException)
+                    {
+                        SendMessageToClient(Const.NoPermissionToDeleteFileMessage);
+                    }
                 }
-                catch (IOException)
-                {
-                    SendMessageToClient(Const.CannotDeleteFileMessage);
-                }
-                catch (SecurityException)
-                {
-                    SendMessageToClient(Const.NoPermissionToDeleteFileMessage);
-                }
+                else
+                    SendMessageToClient(Const.SyntaxErrorInParametersMessage);
             }
             else
-                SendMessageToClient(Const.SyntaxErrorInParametersMessage);
-            
+                SendMessageToClient(Const.NoPermissionToDeleteFileMessage);            
         }
 
         private void HandleMkdCommand(IList<string> args)
         {
-            string directory = JoinArguments(args);
-            string path = FtpServer.GetRealPath(_currentWorkingDirectory + "/" + directory);
-
-            if (!Directory.Exists(path))
+            if (!UserIsAnonymous())
             {
-                try
+                string directory = JoinArguments(args);
+                string path = FtpServer.GetRealPath(_currentWorkingDirectory + "/" + directory);
+
+                if (!Directory.Exists(path))
                 {
-                    new DirectoryInfo(path).Create();
-                    SendMessageToClient(Const.DirectoryCreatedMessage);
+                    try
+                    {
+                        new DirectoryInfo(path).Create();
+                        SendMessageToClient(Const.DirectoryCreatedMessage);
+                    }
+                    catch (IOException)
+                    {
+                        SendMessageToClient(Const.CannotCreateDirectoryMessage);
+                    }
                 }
-                catch (IOException)
-                {
-                    SendMessageToClient(Const.CannotCreateDirectoryMessage);
-                }
+                else
+                    SendMessageToClient(Const.DirectoryAlreadyExistsMessage);
             }
             else
-                SendMessageToClient(Const.DirectoryAlreadyExistsMessage);
+                SendMessageToClient(Const.PermissionDeniedMessage);
         }
 
         private void HandleRmdCommand(IList<string> args)
         {
-            string directory = JoinArguments(args);
-            string path = FtpServer.GetRealPath(_currentWorkingDirectory + "/" + directory);
-
-            if (Directory.Exists(path))
+            if (!UserIsAnonymous())
             {
-                try
+                string directory = JoinArguments(args);
+                string path = FtpServer.GetRealPath(_currentWorkingDirectory + "/" + directory);
+
+                if (Directory.Exists(path))
                 {
-                    new DirectoryInfo(path).Delete();
-                    SendMessageToClient(Const.DirectoryRemovedMessage);
+                    try
+                    {
+                        new DirectoryInfo(path).Delete();
+                        SendMessageToClient(Const.DirectoryRemovedMessage);
+                    }
+                    catch (IOException)
+                    {
+                        SendMessageToClient(Const.CannotDeleteDirectoryMessage);
+                    }
+                    catch (SecurityException)
+                    {
+                        SendMessageToClient(Const.NoPermissionToDeleteDirectoryMessage);
+                    }
                 }
-                catch (IOException)
-                {
-                    SendMessageToClient(Const.CannotDeleteDirectoryMessage);
-                }
-                catch (SecurityException)
-                {
-                    SendMessageToClient(Const.NoPermissionToDeleteDirectoryMessage);
-                }
+                else
+                    SendMessageToClient(Const.SyntaxErrorInParametersMessage);
             }
             else
-                SendMessageToClient(Const.SyntaxErrorInParametersMessage);
-
+                SendMessageToClient(Const.PermissionDeniedMessage);
         }
 
         private void HandleNoopCommand()
@@ -475,6 +499,9 @@ namespace BaconFTP.Server
 
                     _logger.Write("Logged in as \'{0}\' from {1}.", 
                                   _client.Username, _client.EndPoint);
+
+                    _userAccount = user;
+
                     return true;
                 }
                 else
