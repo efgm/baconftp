@@ -17,7 +17,7 @@ namespace BaconFTP.ConfigurationManager
     public partial class ConfigurationManager : Form
     {
         private readonly IAccountRepository _accountRepository = new AccountRepository();
-        private string _editMode;
+        private string _mode;
 
         public ConfigurationManager()
         {
@@ -71,7 +71,10 @@ namespace BaconFTP.ConfigurationManager
 
         private void btnAcceptOrCancel_Click(object sender, EventArgs e)
         {
-            AddUser();
+            if (_mode == "add")
+                AddUser();
+            else if (_mode == "edit")
+                EditUser();
         }
 
         #endregion //Event handlers
@@ -85,9 +88,9 @@ namespace BaconFTP.ConfigurationManager
 
             foreach (Account a in userList)
                 usernameList.Add(a.Username);
-
+ 
             cbUsers.DataSource = usernameList;
-            cbUsers.SelectedIndex = -1;    
+            cbUsers.SelectedIndex = -1;  
         }
 
         private void LoadLoggingMethods()
@@ -194,10 +197,9 @@ namespace BaconFTP.ConfigurationManager
 
         private void SetAddUserMode()
         {
-            _editMode = "add";
+            _mode = "add";
 
-            tbUsername.Text = string.Empty;
-            tbPassword.Text = string.Empty;
+            ClearValues();
 
             tbUsername.Enabled = true;
             tbPassword.Enabled = true;
@@ -213,8 +215,6 @@ namespace BaconFTP.ConfigurationManager
 
         private void SetSelectUserMode()
         {
-            _editMode = "select";
-
             btnAcceptOrCancel.Enabled = false;
             btnCancel.Enabled = false;
             btnEdit.Enabled = false;
@@ -244,8 +244,22 @@ namespace BaconFTP.ConfigurationManager
 
         private void SaveUser()
         {
-            _accountRepository.Add(new Account(tbUsername.Text, tbPassword.Text));
-            ShowInfo("User has been added.", "User {0} has been added successfully.", tbUsername.Text);
+            if (_mode == "add")
+            {
+                _accountRepository.Add(new Account(tbUsername.Text, tbPassword.Text));
+                ShowInfo("User has been added.", "User '{0}' has been added successfully.", tbUsername.Text);
+            }
+            else if (_mode == "edit")
+            {
+                Account user = _accountRepository.GetByUsername((string)cbUsers.SelectedItem);
+
+                user.Username = tbUsername.Text;
+                user.Password = tbPassword.Text;
+
+                _accountRepository.Edit(user);
+
+                ShowInfo("User has been edited.", "User '{0}' has been edited sucessfully.", tbUsername.Text);
+            }
 
             LoadUsers();
             SetSelectUserMode();
@@ -262,7 +276,97 @@ namespace BaconFTP.ConfigurationManager
         private void cbUsers_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cbUsers.SelectedIndex != -1)
-                ShowInfo("b", cbUsers.SelectedItem.ToString());
+                SetUserSelectedMode(_accountRepository.GetByUsername((string)cbUsers.SelectedValue));
+            else
+            {
+                ClearValues();
+                SetSelectUserMode();
+            }
+        }
+
+        private void SetUserSelectedMode(Account account)
+        {
+            SetUserValues(account);
+
+            btnEdit.Enabled = true;
+            btnDelete.Enabled = true;
+            btnAcceptOrCancel.Enabled = false;
+            btnCancel.Enabled = false;
+        }
+
+        private void SetUserValues(Account account)
+        {
+            tbUsername.Text = account.Username;
+            tbPassword.Text = account.Password;
+        }
+
+        private void ClearValues()
+        {
+            tbUsername.Text = string.Empty;
+            tbPassword.Text = string.Empty;
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            SetEditUsermode();
+        }
+
+        private void SetEditUsermode()
+        {
+            _mode = "edit";
+
+            btnEdit.Enabled = false;
+            btnDelete.Enabled = false;
+            btnAcceptOrCancel.Enabled = true;
+            btnCancel.Enabled = true;
+
+            cbUsers.Enabled = false;
+            btnAddNewUser.Enabled = false;
+
+            tbUsername.Enabled = true;
+            tbPassword.Enabled = true;
+        }
+
+        private void EditUser()
+        {
+            try
+            {
+                ValidateUserData();
+            }
+            catch (Exception e)
+            {
+                ShowError("Error", e.Message);
+                return;
+            }
+
+            SaveUser();
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            switch (ShowQuestion("Are you sure?", "Are you sure you want to delete user '{0}'?", tbUsername.Text))
+            {
+                case DialogResult.Yes:
+                    DeleteUser();
+                    break;
+                case DialogResult.No:
+                    return;
+            }
+
+            LoadUsers();
+            SetSelectUserMode();
+        }
+
+        private DialogResult ShowQuestion(string title, string message, params object[] args)
+        {
+            return MessageBox.Show(string.Format(message, args), title,
+                                   MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        }
+
+        private void DeleteUser()
+        {
+            _accountRepository.Remove(_accountRepository.GetByUsername((string)cbUsers.SelectedValue));
+            ShowInfo("User has been deleted.", "User '{0}' has been deleted successfully", tbUsername.Text);
         }
     }
 }
