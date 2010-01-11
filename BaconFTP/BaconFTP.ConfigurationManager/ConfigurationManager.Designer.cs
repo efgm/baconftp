@@ -60,6 +60,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.btnExit = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -257,6 +259,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnDelete);
+            this.groupBox2.Controls.Add(this.btnCancel);
             this.groupBox2.Controls.Add(this.btnAcceptOrCancel);
             this.groupBox2.Controls.Add(this.btnEdit);
             this.groupBox2.Controls.Add(this.tbUsername);
@@ -275,16 +279,19 @@
             // 
             // btnAcceptOrCancel
             // 
-            this.btnAcceptOrCancel.Location = new System.Drawing.Point(257, 118);
+            this.btnAcceptOrCancel.Enabled = false;
+            this.btnAcceptOrCancel.Location = new System.Drawing.Point(197, 118);
             this.btnAcceptOrCancel.Name = "btnAcceptOrCancel";
             this.btnAcceptOrCancel.Size = new System.Drawing.Size(75, 23);
             this.btnAcceptOrCancel.TabIndex = 18;
             this.btnAcceptOrCancel.Text = "Accept";
             this.btnAcceptOrCancel.UseVisualStyleBackColor = true;
+            this.btnAcceptOrCancel.Click += new System.EventHandler(this.btnAcceptOrCancel_Click);
             // 
             // btnEdit
             // 
-            this.btnEdit.Location = new System.Drawing.Point(176, 118);
+            this.btnEdit.Enabled = false;
+            this.btnEdit.Location = new System.Drawing.Point(35, 118);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(75, 23);
             this.btnEdit.TabIndex = 11;
@@ -293,17 +300,19 @@
             // 
             // tbUsername
             // 
+            this.tbUsername.Enabled = false;
             this.tbUsername.Location = new System.Drawing.Point(116, 59);
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.Size = new System.Drawing.Size(135, 20);
-            this.tbUsername.TabIndex = 17;
+            this.tbUsername.TabIndex = 16;
             // 
             // tbPassword
             // 
+            this.tbPassword.Enabled = false;
             this.tbPassword.Location = new System.Drawing.Point(116, 86);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.Size = new System.Drawing.Size(135, 20);
-            this.tbPassword.TabIndex = 16;
+            this.tbPassword.TabIndex = 17;
             // 
             // label7
             // 
@@ -331,6 +340,7 @@
             this.btnAddNewUser.TabIndex = 13;
             this.btnAddNewUser.Text = "Add new";
             this.btnAddNewUser.UseVisualStyleBackColor = true;
+            this.btnAddNewUser.Click += new System.EventHandler(this.btnAddNewUser_Click);
             // 
             // cbUsers
             // 
@@ -339,6 +349,7 @@
             this.cbUsers.Name = "cbUsers";
             this.cbUsers.Size = new System.Drawing.Size(135, 21);
             this.cbUsers.TabIndex = 12;
+            this.cbUsers.SelectedIndexChanged += new System.EventHandler(this.cbUsers_SelectedIndexChanged);
             // 
             // label5
             // 
@@ -358,6 +369,26 @@
             this.btnExit.Text = "&Exit";
             this.btnExit.UseVisualStyleBackColor = true;
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Enabled = false;
+            this.btnCancel.Location = new System.Drawing.Point(278, 118);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 19;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Enabled = false;
+            this.btnDelete.Location = new System.Drawing.Point(116, 118);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(75, 23);
+            this.btnDelete.TabIndex = 20;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
             // 
             // ConfigurationManager
             // 
@@ -418,6 +449,8 @@
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.MaskedTextBox tbServerPort;
         private System.Windows.Forms.Button btnExit;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnDelete;
     }
 }
 
