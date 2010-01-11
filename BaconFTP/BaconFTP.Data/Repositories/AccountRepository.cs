@@ -67,6 +67,28 @@ namespace BaconFTP.Data.Repositories
             _accountsXmlFile.Save(_pathToXmlFile);
         }
 
+        public void Edit(Account a)
+        {
+            var acc = (from _a in _root.Elements()
+                       where _a.Attribute("id").Value == a.AccountID.ToString()
+                       select _a).Single();
+
+            acc.Attribute("username").Value = a.Username;
+            acc.Attribute("password").Value = Encryp_Decrypt.Encrypt(a.Password, Const.ClearTextForEncriptDecript);
+
+            _accountsXmlFile.Save(_pathToXmlFile);
+        }
+
+        public void Remove(Account a)
+        {
+            (from _a in _root.Elements()
+             where _a.Attribute("id").Value == a.AccountID.ToString()
+             select _a).Single().Remove();
+
+            _accountsXmlFile.Save(_pathToXmlFile);
+
+        }
+
         private void GenerateAccountsFile()
         {
             XDocument xml = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),

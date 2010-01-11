@@ -9,6 +9,9 @@ namespace BaconFTP.Data.Repositories
     {
         Account[] GetAll();
         Account GetByUsername(string username);
+
         void Add(Account item);
+        void Edit(Account item);
+        void Remove(Account item);
     }
 }
