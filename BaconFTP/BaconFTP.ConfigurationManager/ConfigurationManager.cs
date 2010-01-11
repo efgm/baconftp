@@ -5,6 +5,7 @@ using BaconFTP.Data.Configuration;
 using BaconFTP.Data.Repositories;
 using System.IO;
 using BaconFTP.Data;
+using System.Diagnostics;
 
 namespace BaconFTP.ConfigurationManager
 {
@@ -69,6 +70,37 @@ namespace BaconFTP.ConfigurationManager
                 AddUser();
             else if (_mode == "edit")
                 EditUser();
+        }
+
+        private void btnAddNewUser_Click(object sender, EventArgs e)
+        {
+            SetAddUserMode();
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            switch (ShowQuestion("Are you sure?", "Are you sure you want to delete user '{0}'?", tbUsername.Text))
+            {
+                case DialogResult.Yes:
+                    DeleteUser();
+                    break;
+                case DialogResult.No:
+                    return;
+            }
+
+            LoadUsers();
+            SetSelectUserMode();
+        }
+
+        private void cbUsers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbUsers.SelectedIndex != -1)
+                SetUserSelectedMode(_accountRepository.GetByUsername((string)cbUsers.SelectedValue));
+            else
+            {
+                ClearValues();
+                SetSelectUserMode();
+            }
         }
 
         #endregion //Event handlers
@@ -174,19 +206,19 @@ namespace BaconFTP.ConfigurationManager
 
         private void OpenHelpFile()
         {
-            throw new NotImplementedException();
+            try
+            {
+                Process.Start("baconftp_manual.pdf");
+            }
+            catch
+            {
+                ShowError("Error", "Cannot open help file.");
+            }
         }
 
         private void OpenAboutDialog()
         {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        private void btnAddNewUser_Click(object sender, EventArgs e)
-        {
-            SetAddUserMode();
+            new AboutDialog().ShowDialog();
         }
 
         private void SetAddUserMode()
@@ -267,17 +299,6 @@ namespace BaconFTP.ConfigurationManager
                 throw new Exception("Please enter a vaid password.");
         }
 
-        private void cbUsers_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cbUsers.SelectedIndex != -1)
-                SetUserSelectedMode(_accountRepository.GetByUsername((string)cbUsers.SelectedValue));
-            else
-            {
-                ClearValues();
-                SetSelectUserMode();
-            }
-        }
-
         private void SetUserSelectedMode(Account account)
         {
             SetUserValues(account);
@@ -336,21 +357,6 @@ namespace BaconFTP.ConfigurationManager
             SaveUser();
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            switch (ShowQuestion("Are you sure?", "Are you sure you want to delete user '{0}'?", tbUsername.Text))
-            {
-                case DialogResult.Yes:
-                    DeleteUser();
-                    break;
-                case DialogResult.No:
-                    return;
-            }
-
-            LoadUsers();
-            SetSelectUserMode();
-        }
-
         private DialogResult ShowQuestion(string title, string message, params object[] args)
         {
             return MessageBox.Show(string.Format(message, args), title,
@@ -362,5 +368,7 @@ namespace BaconFTP.ConfigurationManager
             _accountRepository.Remove(_accountRepository.GetByUsername((string)cbUsers.SelectedValue));
             ShowInfo("User has been deleted.", "User '{0}' has been deleted successfully", tbUsername.Text);
         }
+
+        #endregion //implementation
     }
 }

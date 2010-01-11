@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigurationManager));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tbServerPort = new System.Windows.Forms.MaskedTextBox();
             this.cbLoggingMethods = new System.Windows.Forms.ComboBox();
@@ -400,8 +401,10 @@
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "ConfigurationManager";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "BaconFTP Server Configuration";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
