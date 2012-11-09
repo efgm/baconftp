@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaconFTP.Server", "BaconFTP.Server\BaconFTP.Server.csproj", "{862D4B83-3F35-4ED7-8C48-729CD624D182}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaconFTP.Main", "BaconFTP.Main\BaconFTP.Main.csproj", "{B4E1CE50-190C-4229-B2C6-C5550E4E5210}"
