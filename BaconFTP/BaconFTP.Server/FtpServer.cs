@@ -95,6 +95,8 @@ namespace BaconFTP.Server
 
         #region Implementation
 
+        //MODIFICADO
+
         //se mantiene escuchando por conexiones, le asigna un thread a cada cliente que se conecte.
         private static void ListenForConnections()
         {
