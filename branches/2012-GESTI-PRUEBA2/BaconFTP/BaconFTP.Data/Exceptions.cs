@@ -2,6 +2,8 @@
 
 namespace BaconFTP.Data.Exceptions
 {
+    /* Cambio de prueba */
+
     public class LoggingMethodUnknownException : Exception
     {
         public LoggingMethodUnknownException()
